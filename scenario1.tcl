@@ -34,10 +34,10 @@ Antenna/OmniAntenna set Gr_ 1.0
 #Physica layer setting 
 #======================
 Phy/WirelessPhy set freq_ 2.4e+9 ;# The working band is 2.4GHz 
-Phy/WirelessPhy set L_ 0.5   ;#Define teh system loss in TwoRayGround 
+Phy/WirelessPhy set L_ 0.5   ;#Define the system loss in TwoRayGround 
 Phy/WirelessPhy set  bandwidth_  28.8*10e3   ;#28.8 kbps 
 # For model 'TwoRayGround'
-# Thereceived signals strenghts  in different distances 
+# The received signals strenghts  in different distances 
 set dist(5m)  7.69113e-06
 set dist(9m)  2.37381e-06
 set dist(10m) 1.92278e-06
