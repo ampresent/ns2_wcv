@@ -8,9 +8,10 @@ set val(mac)            Mac/802_15_4
 set val(ifq)            Queue/DropTail/PriQueue    ;# interface queue type
 set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
+set opt(filters)        GradientFilter    ;# options can be one or more of 
 set val(ifqlen)         150                         ;# max packet in ifq
 set val(nn)             4                         ;# number of mobilenodes
-set val(rp)             AODV                       ;# routing protocol
+set val(rp)             Directed_Diffusion		;# routing protocol
 set val(x)  50
 set val(y)  50
 #Queue/DropTail/PriQueue set Prefer_Routing_Protocols    1
@@ -73,7 +74,7 @@ $ns_ trace-all $scenario1
 #Define the NAM output file
 set scenario1nam     [open scenario1.nam w]
 $ns_ namtrace-all-wireless $scenario1nam $val(x) $val(y)
-$ns_ puts-nam-traceall {# nam4wpan #}  ;# inform nam that this is a trace file for wpan (special handling needed)
+#$ns_ puts-nam-traceall {# nam4wpan #}  ;# inform nam that this is a trace file for wpan (special handling needed)
 
 # set up topography object
 set topo       [new Topography]
@@ -93,6 +94,7 @@ $ns_ node-config -adhocRouting $val(rp) \
   -propType $val(prop) \
   -phyType $val(netif) \
   -topoInstance $topo \
+  -diffusionFilter $opt(filters) \
   -agentTrace OFF \
   -routerTrace OFF \
   -macTrace ON \
@@ -104,7 +106,8 @@ $ns_ node-config -adhocRouting $val(rp) \
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
- set node_($i) [$ns_ node] 
+  # Why there is $i ???
+ set node_($i) [$ns_ node $i] 
  $node_($i) random-motion 0  ;# disable random motion
  $god_ new_node $node_($i)
 }
@@ -125,57 +128,25 @@ $node_(3) set Y_ 5.0
 $node_(3) set Z_ 0.000000000000
 #set null [new Agent/Null]
 #$ns_ attach-agent $node_(3) $null
-# Define the cbr traffic 
-proc cbrtraffic { src dst interval starttime stoptime packetsize stage } {
-   global ns_ node_
-   set udp([expr $src + $stage]) [new Agent/UDP]
-   eval $ns_ attach-agent \$node_($src) \$udp([expr $src + $stage])
-   set null([expr $src + $stage]) [new Agent/Null]
-   eval $ns_ attach-agent \$node_($dst) \$null([expr $src + $stage])
-   set cbr([expr $src + $stage]) [new Application/Traffic/CBR]
-   eval \$cbr([expr $src + $stage]) set packetSize_ $packetsize
-   eval \$cbr([expr $src + $stage]) set interval_ $interval
-   eval \$cbr([expr $src + $stage]) set random_ 0
-   #eval \$cbr($src) set maxpkts_ 10000
-   eval \$cbr([expr $src + $stage]) attach-agent \$udp([expr $src + $stage])
-   eval $ns_ connect \$udp([expr $src + $stage]) \$null([expr $src + $stage])
-   $ns_ at $starttime "$cbr([expr $src + $stage]) start"
-   $ns_ at $stoptime "$cbr([expr $src + $stage]) stop"
-# $ns_ at $stoptime "$node_($src) reset" 
-#$ns_ at $stoptime "$node_($dst) reset" 
-}
 
 ## Establish traffic between nodes 
- puts "\nTraffic: cbr"
    Mac/802_15_4 wpanCmd ack4data off
    puts [format "Acknowledgement for data: %s" [Mac/802_15_4 wpanCmd ack4data]]
 #src dest interval start stop packetsize stage 
 #the first sensor activity
-cbrtraffic 0 3 0.2 0.1 0.9 5 1;# target is in the range from 15 to 10 meters from the first sensor (sensed signal=5 bytes)
-cbrtraffic 0 3 0.2 1.0 1.9 8 2;# target is in the range from 10 to 5 meters from the first sensor (sensed signal=8 bytes) 
-cbrtraffic 0 3 0.2 2.0 3.9 10 3;#target is in the range from 5 to 0 meters from the first sensor (sensed signal=10 bytes) 
-cbrtraffic 0 3 0.2 4.0 4.9 8 4;# target is in the range from 5 to 10 meters from the first sensor (sensed signal=8 bytes) 
-cbrtraffic 0 3 0.2 5.0 5.9 5 5;# target is in the range from 10 to 15 meters from the first sensor (sensed signal=5 bytes)
-cbrtraffic 0 3 0.2 6.0 6.9 3 6;# target is in the range from 15 to 20 meters from the first sensor (sensed signal=5 bytes)
-cbrtraffic 0 3 0.2 7 7.9 1 7;# target is in the range from 20 to 25 meters from the first sensor (sensed signal=5 bytes) 
-#the second sensor activity
-cbrtraffic 1 3 0.2 0.2 0.9 1 1; # target is the range of 25 to 20 meters far from the sensor(sensed signal=1 bytes) 
-cbrtraffic 1 3 0.2 1 1.9 3 2; # target is the range of 20 to 15 meters far from the sensor(sensed signal=3 bytes) 
-cbrtraffic 1 3 0.2 2 2.9 5 3; # target is the range of 15 to 10 meters far from the sensor(sensed signal=5 bytes) 
-cbrtraffic 1 3 0.2 3 3.9 8 4; # target is the range of 10 to 5 meters far from the sensor(sensed signal=8 bytes) 
-cbrtraffic 1 3 0.2 4 5.9 10 5; # target is the range of 0 to 5 meters far from the sensor(sensed signal=10 bytes) 
-cbrtraffic 1 3 0.2 6 6.9 8 6; # target is the range of 5 to 10 meters far from the sensor(sensed signal=8 bytes) 
-cbrtraffic 1 3 0.2 7 7.9 5 7; # target is the range of 25 to 20 meters far from the sensor(sensed signal=5 bytes)
-cbrtraffic 1 3 0.2 8 8.9 3 8; # target is the range of 25 to 20 meters far from the sensor(sensed signal=3 bytes)
-cbrtraffic 1 3 0.2 9 9.9 1 9; # target is the range of 25 to 20 meters far from the sensor(sensed signal=1 bytes) 
-#the third sensor activity
-cbrtraffic 2 3 0.2 2 2.9 1 1; # target is the range of 25 to 20 meters far from the sensor(sensed signal=1 bytes)
-cbrtraffic 2 3 0.2 3 3.9 3 2; # target is the range of 20 to 15 meters far from the sensor(sensed signal=3 bytes)
-cbrtraffic 2 3 0.2 4 4.9 5 3; # target is the range of 15 to 10 meters far from the sensor(sensed signal=5 bytes)
-cbrtraffic 2 3 0.2 5 5.9 8 4; # target is the range of 10 to 5 meters far from the sensor(sensed signal=8 bytes) 
-cbrtraffic 2 3 0.2 6 7.9 10 5; # target is the range of 0 to 5 meters far from the sensor(sensed signal=10 bytes)
-cbrtraffic 2 3 0.2 8 8.9 8 6; # target is the range of 5 to 10 meters far from the sensor(sensed signal=8 bytes) 
-cbrtraffic 2 3 0.2 9 10 5 7; # target is the range of 25 to 20 meters far from the sensor(sensed signal=5 bytes) 
+   
+  
+# Diffusion src application 
+set src_(1) [new Application/DiffApp/PingSender/TPP]
+$ns_ attach-diffapp $node_(2) $src_(1)
+$ns_ at 1.3 "$src_(1) publish"
+
+# Diffusion sink application
+#
+set snk_(0) [new Application/DiffApp/PingReceiver/TPP]
+$ns_ attach-diffapp $node_(3) $snk_(0)
+$ns_ at 2.456 "$snk_(0) subscribe"
+
 
 # defines the node size in nam
 for {set i 0} {$i < $val(nn)} {incr i} {
