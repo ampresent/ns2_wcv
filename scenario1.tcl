@@ -2,7 +2,7 @@
 # Define options
 # ======================================================================
 set val(chan)           Channel/WirelessChannel    ;# Channel Type
-set val(prop)           Propagation/TwoRayGround   ;# radio-propagation model
+set val(prop)           Propagation/FreeSpace		;# radio-propagation model
 set val(netif)          Phy/WirelessPhy/802_15_4
 set val(mac)            Mac/802_15_4
 set val(ifq)            Queue/DropTail/PriQueue    ;# interface queue type
