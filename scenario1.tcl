@@ -12,8 +12,8 @@ set opt(filters)        GradientFilter    ;# options can be one or more of
 set val(ifqlen)         150                         ;# max packet in ifq
 set val(nn)             4                         ;# number of mobilenodes
 set val(rp)             Directed_Diffusion		;# routing protocol
-set val(x)  50
-set val(y)  50
+set val(x)		50
+set val(y)		50
 #Queue/DropTail/PriQueue set Prefer_Routing_Protocols    1
 #LL set mindelay_                50us
 #LL set delay_                   25us
@@ -60,7 +60,8 @@ Phy/WirelessPhy set RXThresh_  ;#$dist(40m)
 #Pr(d) = Pt*Gt*Gr*ht*ht*hr*hr/(d*d*d*d*L)
 # thus the transmitted signal power
 #average Pt= d*d*d*d*L*Pr(d)/(Gt*Gr*ht*ht*hr*hr) = 1mW     
-Phy/WirelessPhy set  pt_ 0.001
+# Computed by the propagation/threshold program
+Phy/WirelessPhy set  pt_ 0.281838
 #Specified Parameters for 802.15.4 MAC
 Mac/802_15_4 wpanCmd verbose on   ;# to work in verbose mode 
 Mac/802_15_4 wpanNam namStatus on  ;# default = off (should be turned on before other 'wpanNam' commands can work)
@@ -112,7 +113,7 @@ for {set i 0} {$i < $val(nn) } {incr i} {
  $god_ new_node $node_($i)
 }
 #Lable the sink node 
-$ns_ at 0.0 "$node_(3) NodeLabel Sink"
+$node_(3) NodeLabel WCV
 # Define the nodes positions 
 $node_(0) set X_ 15.0
 $node_(0) set Y_ 20.0
