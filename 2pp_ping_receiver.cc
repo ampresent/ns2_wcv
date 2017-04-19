@@ -97,6 +97,15 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 	  energy = energyAttr->getVal();
 
 	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f)\n", lat, lon, energy);
+	  if (rear == front) {
+		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
+		  return;
+	  }
+	  rear = (rear + 1) % 3;
+	  req_queue[rear].lat = lat;
+	  req_queue[rear].lon = lon;
+	  req_queue[rear].energy = energy;
+	  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
   }else{
 	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");
   }
@@ -197,6 +206,9 @@ TPPPingReceiverApp::TPPPingReceiverApp()
 TPPPingReceiverApp::TPPPingReceiverApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
+	front = 0;
+	rear = 0;
+
 	global_debug_level=5;
   last_seq_recv_ = 0;
   num_msg_recv_ = 0;

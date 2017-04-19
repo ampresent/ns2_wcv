@@ -67,6 +67,15 @@ private:
   // NR Specific variables
   TPPPingReceiverReceive *mr_;
   handle subHandle_;
+  struct request{
+	  float lat;
+	  float lon;
+	  double energy;
+  };
+
+  struct request req_queue[3];
+  unsigned front;
+  unsigned rear;
 
   // Ping App variables
   int last_seq_recv_;
