@@ -10,7 +10,7 @@ set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set opt(filters)        GradientFilter    ;# options can be one or more of 
 set val(ifqlen)         150                         ;# max packet in ifq
-set val(nn)             4                         ;# number of mobilenodes
+set val(nn)             5                         ;# number of mobilenodes
 set val(rp)             Directed_Diffusion		;# routing protocol
 set val(x)		50
 set val(y)		50
@@ -136,22 +136,23 @@ $node_(3) set Z_ 0.000000000000
 #src dest interval start stop packetsize stage 
 #the first sensor activity
    
-  
-# Diffusion src application 
-#set src_(1) [new Application/DiffApp/WCVSender]
-set src_(1) [new Application/DiffApp/PingSender/TPP]
-$ns_ attach-diffapp $node_(2) $src_(1)
+for {set i 0} {$i < 3} {incr i} {
+	# src_ is used to communicate with WCV
+	set src_($i) [new Application/DiffApp/PingSender/TPP]
+}
+# wcv
+set wcv_ [new Application/DiffApp/PingReceiver/TPP]
+
+$ns_ attach-diffapp $node_(0) $src_(0)
+$ns_ attach-diffapp $node_(1) $src_(1)
+$ns_ attach-diffapp $node_(2) $src_(2)
+
 $ns_ at 1.3 "$src_(1) publish"
-$ns_ at 20.0 "$src_(1) publish"
+$ns_ at 20.0 "$src_(2) publish"
 
-# Diffusion sink application
-#
-#set snk_(0) [new Application/DiffApp/WCVReceiver]
-set snk_(0) [new Application/DiffApp/PingReceiver/TPP]
-$ns_ attach-diffapp $node_(3) $snk_(0)
-$ns_ at 3.456 "$snk_(0) subscribe"
-$ns_ at 100.00 "$snk_(0) subscribe"
-
+$ns_ attach-diffapp $node_(3) $wcv_
+$ns_ at 3.456 "$wcv_ subscribe"
+$ns_ at 100.00 "$wcv_ subscribe"
 
 # defines the node size in nam
 for {set i 0} {$i < $val(nn)} {incr i} {
