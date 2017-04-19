@@ -139,19 +139,31 @@ $node_(3) set Z_ 0.000000000000
 for {set i 0} {$i < 3} {incr i} {
 	# src_ is used to communicate with WCV
 	set src_($i) [new Application/DiffApp/PingSender/TPP]
+	# con_ is energy consumer
+	set con_($i) [new Application/DiffApp/PingSender/OPP]
 }
 # wcv
 set wcv_ [new Application/DiffApp/PingReceiver/TPP]
+set snk_ [new Application/DiffApp/PingReceiver/OPP]
 
 $ns_ attach-diffapp $node_(0) $src_(0)
 $ns_ attach-diffapp $node_(1) $src_(1)
 $ns_ attach-diffapp $node_(2) $src_(2)
 
-$ns_ at 1.3 "$src_(1) publish"
-$ns_ at 20.0 "$src_(2) publish"
+$ns_ attach-diffapp $node_(0) $con_(0)
+$ns_ attach-diffapp $node_(1) $con_(1)
+$ns_ attach-diffapp $node_(2) $con_(2)
+
+$ns_ attach-diffapp $node_(4) $snk_
+$ns_ at 1.3 "$con_(0) publish"
+$ns_ at 3.3 "$con_(1) publish"
+$ns_ at 5.3 "$con_(2) publish"
+$ns_ at 10.0 "$snk_ subscribe"
 
 $ns_ attach-diffapp $node_(3) $wcv_
+$ns_ at 1.3 "$src_(1) publish"
 $ns_ at 3.456 "$wcv_ subscribe"
+$ns_ at 20.0 "$src_(2) publish"
 $ns_ at 100.00 "$wcv_ subscribe"
 
 # defines the node size in nam
