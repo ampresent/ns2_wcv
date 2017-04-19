@@ -138,15 +138,19 @@ $node_(3) set Z_ 0.000000000000
    
   
 # Diffusion src application 
+#set src_(1) [new Application/DiffApp/WCVSender]
 set src_(1) [new Application/DiffApp/PingSender/TPP]
 $ns_ attach-diffapp $node_(2) $src_(1)
 $ns_ at 1.3 "$src_(1) publish"
+$ns_ at 20.0 "$src_(1) publish"
 
 # Diffusion sink application
 #
+#set snk_(0) [new Application/DiffApp/WCVReceiver]
 set snk_(0) [new Application/DiffApp/PingReceiver/TPP]
 $ns_ attach-diffapp $node_(3) $snk_(0)
-$ns_ at 2.456 "$snk_(0) subscribe"
+$ns_ at 3.456 "$snk_(0) subscribe"
+$ns_ at 100.00 "$snk_(0) subscribe"
 
 
 # defines the node size in nam
@@ -154,13 +158,13 @@ for {set i 0} {$i < $val(nn)} {incr i} {
  $ns_ initial_node_pos $node_($i) 5
 }
 
-# Tell nodes simulation ends at 10.0
+# Tell nodes simulation ends at 30.0
 for {set i 0} {$i < $val(nn) } {incr i} {
-   $ns_ at 10 "$node_($i) reset";
+   $ns_ at 200 "$node_($i) reset";
 }
-$ns_ at 10 "stop"
-$ns_ at 10 "puts \"\nNS EXITING...\""
-$ns_ at 10 "$ns_ halt"
+$ns_ at 200 "stop"
+$ns_ at 200 "puts \"\nNS EXITING...\""
+$ns_ at 200 "$ns_ halt"
 
 proc stop {} {
     global ns_ scenario1 scenario1nam
