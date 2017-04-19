@@ -74,7 +74,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
   NRSimpleAttribute<void *> *timeAttr = NULL;
   NRSimpleAttribute<float> *latitudeAttr = NULL;
   NRSimpleAttribute<float> *longitudeAttr = NULL;
-  NRSimpleAttribute<float> *energyAttr = NULL;
+  NRSimpleAttribute<double> *energyAttr = NULL;
   EventTime *probe_event;
   long delay_seconds;
   long delay_useconds;
@@ -170,6 +170,7 @@ handle TPPPingReceiverApp::setupSubscription()
   //attrs.push_back(LatitudeAttr.make(NRAttribute::GT, 54.78));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::LE, 87.32));
   attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));
+  attrs.push_back(EnergyAttr.make(NRAttribute::LT, 99.99999));
 
   handle h = dr_->subscribe(&attrs, mr_);
 

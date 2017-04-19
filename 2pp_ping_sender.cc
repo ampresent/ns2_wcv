@@ -132,6 +132,7 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 handle TPPPingSenderApp::setupSubscription()
 {
   NRAttrVec attrs;
+  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
 
   attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
   attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
@@ -139,6 +140,7 @@ handle TPPPingSenderApp::setupSubscription()
   attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::IS, 54.00));
+  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
 
   handle h = dr_->subscribe(&attrs, mr_);
 
