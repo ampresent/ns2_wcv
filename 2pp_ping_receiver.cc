@@ -102,24 +102,33 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
 		  return;
 	  }
-	  req_queue[rear].lat = lat;
-	  req_queue[rear].lon = lon;
-	  req_queue[rear].energy = energy;
-	  rear = (rear + 1) % 3;
-	  // Assume it has charged completely
-	  // But this part should run after wcv reaches his destination
-	  struct request popout = req_queue[front];
-	  //MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
-	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-	  if (!wcv_handler) {
-		  wcv_handler = new WCVHandler(node);
+	  bool exist = false;
+	  for (unsigned i=front;i!=rear;i=(i+1)%3) {
+		  if (req_queue[i].lat==lat && req_queue[i].lon==lon){
+			  exist = true;
+			  break;
+		  }
 	  }
-	  if (node->speed() < 0.0001) {
-		  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
-		  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
-		  front = (front + 1) % 3;
+	  if (!exist) {
+		  req_queue[rear].lat = lat;
+		  req_queue[rear].lon = lon;
+		  req_queue[rear].energy = energy;
+		  rear = (rear + 1) % 3;
+		  // Assume it has charged completely
+		  // But this part should run after wcv reaches his destination
+		  struct request popout = req_queue[front];
+		  //MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+		  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+		  if (!wcv_handler) {
+			  wcv_handler = new WCVHandler(node);
+		  }
+		  if (node->speed() < 0.0001) {
+			  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+			  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
+			  front = (front + 1) % 3;
+		  }
+		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 	  }
-	  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
   }else{
 	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");
   }
