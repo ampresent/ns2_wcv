@@ -48,6 +48,7 @@
 #endif // HAVE_CONFIG_H
 
 #include "ping.hh"
+#include "wcv.h"
 
 class TPPPingReceiverReceive;
 
@@ -83,6 +84,7 @@ private:
   int first_msg_recv_;
 
   handle setupSubscription();
+  WCVHandler* wcv_handler;
 };
 
 class TPPPingReceiverReceive : public NR::Callback {

@@ -41,6 +41,7 @@
 // which carries forward this exception.
 
 #include "2pp_ping_receiver.hh"
+#include "wcv.h"
 
 #ifdef NS_DIFFUSION
 static class TPPPingReceiverAppClass : public TclClass {
@@ -97,14 +98,27 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 	  energy = energyAttr->getVal();
 
 	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f)\n", lat, lon, energy);
-	  if (rear == front) {
+	  if ((rear+1)%3 == front) {
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
 		  return;
 	  }
-	  rear = (rear + 1) % 3;
 	  req_queue[rear].lat = lat;
 	  req_queue[rear].lon = lon;
 	  req_queue[rear].energy = energy;
+	  rear = (rear + 1) % 3;
+	  // Assume it has charged completely
+	  // But this part should run after wcv reaches his destination
+	  struct request popout = req_queue[front];
+	  //MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+	  if (!wcv_handler) {
+		  wcv_handler = new WCVHandler(node);
+	  }
+	  if (node->speed() < 0.0001) {
+		  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lat, popout.lon);
+		  node->set_destination(popout.lat, popout.lon, 1, wcv_handler);
+		  front = (front + 1) % 3;
+	  }
 	  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
   }else{
 	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");

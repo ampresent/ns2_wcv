@@ -107,13 +107,10 @@ $ns_ node-config -adhocRouting $val(rp) \
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
-  # Why there is $i ???
  set node_($i) [$ns_ node $i] 
  $node_($i) random-motion 0  ;# disable random motion
  $god_ new_node $node_($i)
 }
-#Lable the sink node 
-$node_(3) NodeLabel WCV
 # Define the nodes positions 
 $node_(0) set X_ 15.0
 $node_(0) set Y_ 20.0
@@ -154,17 +151,19 @@ $ns_ attach-diffapp $node_(0) $con_(0)
 $ns_ attach-diffapp $node_(1) $con_(1)
 $ns_ attach-diffapp $node_(2) $con_(2)
 
-$ns_ attach-diffapp $node_(4) $snk_
+$ns_ attach-diffapp $node_(3) $snk_
 $ns_ at 1.3 "$con_(0) publish"
 $ns_ at 3.3 "$con_(1) publish"
 $ns_ at 5.3 "$con_(2) publish"
 $ns_ at 10.0 "$snk_ subscribe"
 
-$ns_ attach-diffapp $node_(3) $wcv_
+$node_(4) NodeLabel wcv
+$ns_ attach-diffapp $node_(4) $wcv_
 $ns_ at 1.3 "$src_(1) publish"
 $ns_ at 3.456 "$wcv_ subscribe"
 $ns_ at 20.0 "$src_(2) publish"
-$ns_ at 100.00 "$wcv_ subscribe"
+$ns_ at 80.0 "$src_(1) publish"
+$ns_ at 90.0 "$wcv_ subscribe"
 
 # defines the node size in nam
 for {set i 0} {$i < $val(nn)} {incr i} {
