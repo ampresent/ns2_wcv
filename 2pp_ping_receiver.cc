@@ -116,17 +116,11 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 		  rear = (rear + 1) % 3;
 		  // Assume it has charged completely
 		  // But this part should run after wcv reaches his destination
-		  struct request popout = req_queue[front];
-		  //MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
-		  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
 		  if (!wcv_handler) {
-			  wcv_handler = new WCVHandler(node);
+			  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+			  wcv_handler = new WCVHandler(node, this);
 		  }
-		  if (node->speed() < 0.0001) {
-			  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
-			  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
-			  front = (front + 1) % 3;
-		  }
+		  subscribe();
 		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 	  }
   }else{
@@ -190,6 +184,19 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
     DiffPrint(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f !\n",
 	      ((DiffusionRouting *)dr_)->getNodeId(),
 	      counterAttr->getVal(), total_delay);
+  }
+}
+
+void TPPPingReceiverApp::subscribe(){
+  if ((front+1)%3 == rear) {
+	  return;
+  }
+  struct request popout = req_queue[front];
+  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+  if (!node -> is_moving()) {
+	  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+	  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
+	  front = (front + 1) % 3;
   }
 }
 
