@@ -116,7 +116,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 	  }
 	  if (node->speed() < 0.0001) {
 		  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
-		  node->set_destination(popout.lon, popout.lat, 1, wcv_handler);
+		  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
 		  front = (front + 1) % 3;
 	  }
 	  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
