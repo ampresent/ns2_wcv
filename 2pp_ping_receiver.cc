@@ -97,7 +97,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 	  lon = longitudeAttr->getVal();
 	  energy = energyAttr->getVal();
 
-	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f)\n", lat, lon, energy);
+	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f)\n", lon ,lat, energy);
 	  if ((rear+1)%3 == front) {
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
 		  return;
@@ -115,8 +115,8 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 		  wcv_handler = new WCVHandler(node);
 	  }
 	  if (node->speed() < 0.0001) {
-		  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lat, popout.lon);
-		  node->set_destination(popout.lat, popout.lon, 1, wcv_handler);
+		  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+		  node->set_destination(popout.lon, popout.lat, 1, wcv_handler);
 		  front = (front + 1) % 3;
 	  }
 	  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
