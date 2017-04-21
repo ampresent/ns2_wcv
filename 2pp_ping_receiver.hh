@@ -63,6 +63,7 @@ public:
 
   void recv(NRAttrVec *data, NR::handle my_handle);
   void run();
+  void subscribe();
 
 private:
   // NR Specific variables
