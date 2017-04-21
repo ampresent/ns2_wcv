@@ -11,15 +11,17 @@ void WCVHandler::handle(Event* e) {
 	struct timeval tv;
 	GetTime(&tv);
 	fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
-	fprintf(stderr, "Updating position\n");
+	fprintf(stderr, "Reached target\n");
 	fflush(stderr);
-	s.schedule(this, &node->pos_intr_, node->position_update_interval_);
 }
 
 int WCVNode::set_destination(double x, double y, double speed, WCVHandler* wcv_handler) {
-	fprintf(stderr, "Setting destination\n");
 	int ret = MobileNode::set_destination(x, y, speed);
+	struct timeval tv;
+	GetTime(&tv);
+	fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
+	fprintf(stderr, "Heading destination (%lf, %lf) at speed %lf\n", destX_, destY_, speed_);
 	Scheduler& s = Scheduler::instance();
-	s.schedule(wcv_handler, &pos_intr_, position_update_interval_);
+	s.schedule(wcv_handler, &pos_intr_, sqrt((destX_-X_)*(destX_-X_)+(destY_-Y_)*(destY_-Y_))/speed_);
 	return ret;
 }
