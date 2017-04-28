@@ -195,7 +195,7 @@ void TPPPingReceiverApp::subscribe(){
   WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
   if (!node -> is_moving()) {
 	  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
-	  node->set_destination(popout.lon-5, popout.lat-5, 1, wcv_handler);
+	  node->set_destination(popout.lon-0.1, popout.lat-0.1, 1, wcv_handler);
 	  front = (front + 1) % 3;
   }
 }
