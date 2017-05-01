@@ -69,7 +69,7 @@ void TPPPingReceiverReceive::recv(NRAttrVec *data, NR::handle my_handle)
   app_->recv(data, my_handle);
 }
 
-void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
+void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 {
   NRSimpleAttribute<int> *counterAttr = NULL;
   NRSimpleAttribute<void *> *timeAttr = NULL;
@@ -114,11 +114,12 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 		  req_queue[rear].lon = lon;
 		  req_queue[rear].energy = energy;
 		  rear = (rear + 1) % 3;
+		  MobileNode* sender = (MobileNode*)Node::get_node_by_address(h);
 		  // Assume it has charged completely
 		  // But this part should run after wcv reaches his destination
 		  if (!wcv_handler) {
 			  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-			  wcv_handler = new WCVHandler(node, this);
+			  wcv_handler = new WCVHandler(node, this, sender, energy);
 		  }
 		  subscribe();
 		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
@@ -188,6 +189,8 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
 }
 
 void TPPPingReceiverApp::subscribe(){
+  // TODO Should it be put here??? 
+  run();
   if ((front+1)%3 == rear) {
 	  return;
   }
