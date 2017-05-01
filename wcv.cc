@@ -6,6 +6,9 @@ void WCVHandler::handle(Event* e) {
 	EnergyModel *em = sensor -> energy_model();
 	double charging_time = (em -> initialenergy() - remaining) / 0.3;
 	Scheduler& s = Scheduler::instance();
+	struct timeval tv;
+	GetTime(&tv);
+	fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
 	if (charging) {
 		// Charged
 		
@@ -15,14 +18,13 @@ void WCVHandler::handle(Event* e) {
 		if (em -> energy() > em -> initialenergy()) {
 			em -> setenergy(em->initialenergy());
 		}
+		fprintf(stderr, "Target has energyc %f J now\n", sensor -> energy_model() -> energy());
+		fflush(stderr);
 		app -> subscribe();
 	} else {
 		// Reached
 
-		struct timeval tv;
-		GetTime(&tv);
-		fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
-		fprintf(stderr, "Reached target\n");
+		fprintf(stderr, "Target has energyc %f J\n", sensor -> energy_model() -> energy());
 		fflush(stderr);
 
 		charging = true;
