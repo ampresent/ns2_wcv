@@ -50,6 +50,8 @@
 #include "ping.hh"
 #include "wcv.h"
 
+extern char * state_str[];
+
 class TPPPingReceiverReceive;
 
 class TPPPingReceiverApp : public DiffApp {
@@ -63,13 +65,25 @@ public:
 
   void recv(NRAttrVec *data, NR::handle my_handle);
   void run();
-  void subscribe();
+  void schedule();
+
+  States get_state() {
+	  fprintf(stderr, "Get status %s\n", state_str[wcv_state]);
+	  fflush(stderr);
+	  return wcv_state;
+  }
+  void set_state(States s) {
+	  fprintf(stderr, "Set status %s\n", state_str[s]);
+	  fflush(stderr);
+	  wcv_state = s; 
+  }
 
 private:
   // NR Specific variables
   TPPPingReceiverReceive *mr_;
   handle subHandle_;
   struct request{
+	  NR::handle handle;
 	  float lat;
 	  float lon;
 	  double energy;
@@ -86,6 +100,7 @@ private:
 
   handle setupSubscription();
   WCVHandler* wcv_handler;
+  States wcv_state;
 };
 
 class TPPPingReceiverReceive : public NR::Callback {

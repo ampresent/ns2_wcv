@@ -30,12 +30,8 @@ class WCVNode : public MobileNode {
 	friend class WCVHandler;
 	// Remember WCVNode is just an agent, can't have any member varible
 	public:
-		//void update_position();
 		int set_destination(double x, double y, double s, WCVHandler* wcv_handler);
-		bool is_moving() {
-			return pos_intr_.uid_ > 0;
-		}
-
+		void recv(WCVHandler* wcv_handler);
 };
 
 #endif // ns_wcv_h

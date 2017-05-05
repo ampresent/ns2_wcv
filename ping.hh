@@ -65,4 +65,13 @@ public:
   long useconds_;
 };
 
+enum States {
+	IDLE,
+	MOVING,
+	REACHED,
+	CHARGED,
+	RECEIVING,
+	RECEIVED,
+	SCHEDULING
+};
 #endif // !_PING_HH_

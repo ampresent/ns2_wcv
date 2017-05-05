@@ -71,6 +71,10 @@ void TPPPingReceiverReceive::recv(NRAttrVec *data, NR::handle my_handle)
 
 void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 {
+  if (get_state() != RECEIVING) {
+    DiffPrint(DEBUG_ALWAYS, "Deaf for now\n");
+    return;
+  }
   NRSimpleAttribute<int> *counterAttr = NULL;
   NRSimpleAttribute<void *> *timeAttr = NULL;
   NRSimpleAttribute<float> *latitudeAttr = NULL;
@@ -113,15 +117,8 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 		  req_queue[rear].lat = lat;
 		  req_queue[rear].lon = lon;
 		  req_queue[rear].energy = energy;
+		  req_queue[rear].handle = h;
 		  rear = (rear + 1) % 3;
-		  MobileNode* sender = (MobileNode*)Node::get_node_by_address(h);
-		  // Assume it has charged completely
-		  // But this part should run after wcv reaches his destination
-		  if (!wcv_handler) {
-			  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-			  wcv_handler = new WCVHandler(node, this, sender, energy);
-		  }
-		  subscribe();
 		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 	  }
   }else{
@@ -188,19 +185,31 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   }
 }
 
-void TPPPingReceiverApp::subscribe(){
-  // TODO Should it be put here??? 
-  run();
-  if ((front+1)%3 == rear) {
+void TPPPingReceiverApp::schedule(){
+  assert(wcv_state == SCHEDULING);
+  if (front == rear) {
 	  return;
   }
+  set_state(IDLE);
   struct request popout = req_queue[front];
-  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-  if (!node -> is_moving()) {
-	  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
-	  node->set_destination(popout.lon-0.1, popout.lat-0.1, 1, wcv_handler);
-	  front = (front + 1) % 3;
+  for (int i=front;i!=rear;i=(i+1)%3) {
+	  fprintf(stderr, "req_queue[%d] = {%lf, %lf, %lf}\n", i, req_queue[i].lon, req_queue[i].lat, req_queue[i].energy);
+	  fflush(stderr);
   }
+  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+
+  if (wcv_handler)
+	  delete wcv_handler;
+  MobileNode* sender = (MobileNode*)Node::get_node_by_address(popout.handle);
+  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
+  if (node->set_destination(popout.lon+1.1, popout.lat-1.1, 1, wcv_handler)) {
+    DiffPrint(DEBUG_ALWAYS, "Failed to set_destination, wait for retry\n");
+    set_state(SCHEDULING);
+    return;
+  }
+  set_state(MOVING);
+  front = (front + 1) % 3;
 }
 
 handle TPPPingReceiverApp::setupSubscription()
@@ -223,7 +232,15 @@ handle TPPPingReceiverApp::setupSubscription()
 
 void TPPPingReceiverApp::run()
 {
+  assert(get_state() == CHARGED);
+  fprintf(stderr, "TPPPingReceiverApp::run()\n");
+  fflush(stderr);
+  set_state(RECEIVING);
   subHandle_ = setupSubscription();
+  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+  if (!wcv_handler)
+	  wcv_handler = new WCVHandler(node, this, NULL, 0);
+  node -> recv(wcv_handler);
 
 #ifndef NS_DIFFUSION
   // Do nothing
@@ -239,10 +256,12 @@ TPPPingReceiverApp::TPPPingReceiverApp()
 TPPPingReceiverApp::TPPPingReceiverApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
-	front = 0;
-	rear = 0;
+  set_state(CHARGED);
+  front = 0;
+  rear = 0;
+  
+  global_debug_level=5;
 
-	global_debug_level=5;
   last_seq_recv_ = 0;
   num_msg_recv_ = 0;
   first_msg_recv_ = -1;
