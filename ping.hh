@@ -58,6 +58,7 @@ extern NRSimpleAttributeFactory<void *> TimeAttr;
 extern NRSimpleAttributeFactory<float> LongitudeAttr;
 extern NRSimpleAttributeFactory<float> LatitudeAttr;
 extern NRSimpleAttributeFactory<double> EnergyAttr;
+extern NRSimpleAttributeFactory<int> IDAttr;
 
 class EventTime {
 public:

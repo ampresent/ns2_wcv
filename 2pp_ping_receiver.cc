@@ -82,6 +82,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   NRSimpleAttribute<float> *latitudeAttr = NULL;
   NRSimpleAttribute<float> *longitudeAttr = NULL;
   NRSimpleAttribute<double> *energyAttr = NULL;
+  NRSimpleAttribute<int> *idAttr = NULL;
   EventTime *probe_event;
   long delay_seconds;
   long delay_useconds;
@@ -95,15 +96,18 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   energyAttr = EnergyAttr.find(data);
   counterAttr = AppCounterAttr.find(data);
   timeAttr = TimeAttr.find(data);
+  idAttr = IDAttr.find(data);
 
   float lat, lon, energy;
+  int id;
   DiffPrint(DEBUG_ALWAYS, "Resolve packet\n");
   if (latitudeAttr && longitudeAttr){
 	  lat = latitudeAttr->getVal();
 	  lon = longitudeAttr->getVal();
 	  energy = energyAttr->getVal();
+	  id = idAttr->getVal();
 
-	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f)\n", lon ,lat, energy);
+	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
 	  if ((rear+1)%3 == front) {
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
 		  return;
@@ -119,7 +123,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 		  req_queue[rear].lat = lat;
 		  req_queue[rear].lon = lon;
 		  req_queue[rear].energy = energy;
-		  req_queue[rear].handle = h;
+		  req_queue[rear].handle = id;
 		  rear = (rear + 1) % 3;
 		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 	  }

@@ -168,6 +168,7 @@ handle TPPPingSenderApp::setupPublication()
   attrs.push_back(LongitudeAttr.make(NRAttribute::IS, longitude));
   attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+  attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
 
   handle h = dr_->publish(&attrs);
 
