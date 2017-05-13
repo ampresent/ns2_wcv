@@ -71,10 +71,12 @@ void TPPPingReceiverReceive::recv(NRAttrVec *data, NR::handle my_handle)
 
 void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 {
+  /*
   if (get_state() != RECEIVING) {
     DiffPrint(DEBUG_ALWAYS, "Deaf for now\n");
     return;
   }
+  */
   NRSimpleAttribute<int> *counterAttr = NULL;
   NRSimpleAttribute<void *> *timeAttr = NULL;
   NRSimpleAttribute<float> *latitudeAttr = NULL;
@@ -188,6 +190,12 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 void TPPPingReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
   if (front == rear) {
+	  /*
+	  set_state(HOLD);
+	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+	  node -> giveup_sched(wcv_handler);
+	  */
+	  set_state(CHARGED);
 	  return;
   }
   set_state(IDLE);
@@ -221,7 +229,7 @@ handle TPPPingReceiverApp::setupSubscription()
   //attrs.push_back(LatitudeAttr.make(NRAttribute::GT, 54.78));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::LE, 87.32));
   attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));
-  attrs.push_back(EnergyAttr.make(NRAttribute::LT, 99.99999));
+  attrs.push_back(EnergyAttr.make(NRAttribute::LT, 0.8));
 
   handle h = dr_->subscribe(&attrs, mr_);
 
@@ -232,22 +240,24 @@ handle TPPPingReceiverApp::setupSubscription()
 
 void TPPPingReceiverApp::run()
 {
-  assert(get_state() == CHARGED);
-  fprintf(stderr, "TPPPingReceiverApp::run()\n");
-  fflush(stderr);
-  set_state(RECEIVING);
-  subHandle_ = setupSubscription();
-  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-  if (!wcv_handler)
-	  wcv_handler = new WCVHandler(node, this, NULL, 0);
-  node -> recv(wcv_handler);
+  // Other states indicates WCV is still running
+  if (get_state() == CHARGED) {
+	  fprintf(stderr, "TPPPingReceiverApp::run()\n");
+	  fflush(stderr);
+	  set_state(RECEIVING);
+	  subHandle_ = setupSubscription();
+	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+	  if (!wcv_handler)
+		  wcv_handler = new WCVHandler(node, this, NULL, 0);
+	  node -> recv(wcv_handler);
 
 #ifndef NS_DIFFUSION
-  // Do nothing
-  while (1){
-    sleep(1000);
-  }
+	  // Do nothing
+	  while (1){
+	    sleep(1000);
+	  }
 #endif // !NS_DIFFUSION
+  }
 }
 
 #ifdef NS_DIFFUSION

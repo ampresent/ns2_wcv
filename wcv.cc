@@ -40,6 +40,8 @@ void WCVHandler::handle(Event* e) {
 		app -> set_state(SCHEDULING);
 		app -> schedule();
 		break;
+	//case HOLD:
+	//	app -> set_state(CHARGED);
 	default:
 		exit(1);
 	}
@@ -62,8 +64,13 @@ int WCVNode::set_destination(double x, double y, double speed, WCVHandler* wcv_h
 	return ret;
 }
 
-void  WCVNode::recv(WCVHandler* wcv_handler) {
+void WCVNode::recv(WCVHandler* wcv_handler) {
 	Scheduler& s = Scheduler::instance();
 	s.schedule(wcv_handler, &pos_intr_, 4);
 }
-
+/*
+void WCVNode::giveup_sched(WCVHandler* wcv_handler) {
+	Scheduler& s = Scheduler::instance();
+	s.schedule(wcv_handler, &pos_intr_, 4);
+}
+*/
