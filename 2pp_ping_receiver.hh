@@ -77,6 +77,7 @@ public:
 	  fflush(stderr);
 	  wcv_state = s; 
   }
+  void ack();
 
 private:
   // NR Specific variables

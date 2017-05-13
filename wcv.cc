@@ -31,6 +31,7 @@ void WCVHandler::handle(Event* e) {
 		if (em -> energy() > em -> initialenergy()) {
 			em -> setenergy(em->initialenergy());
 		}
+		app -> ack();
 		app -> set_state(CHARGED);
 		fprintf(stderr, "WCVHandler::handle()\n");
 		fflush(stderr);

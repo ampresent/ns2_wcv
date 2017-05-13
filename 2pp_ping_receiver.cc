@@ -217,6 +217,10 @@ void TPPPingReceiverApp::schedule(){
     return;
   }
   set_state(MOVING);
+  //front = (front + 1) % 3;
+}
+
+void TPPPingReceiverApp::ack() {
   front = (front + 1) % 3;
 }
 
