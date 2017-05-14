@@ -18,19 +18,21 @@ void WCVHandler::handle(Event* e) {
 		app -> set_state(REACHED);
 		//sensor -> energy_model() -> node_on_ = false;
 		node -> energy_model() -> DecrTxEnergy(charging_time, 0.3);
+		fprintf(stderr, "Target %d has energyc %f J now\n", sensor -> address(), sensor -> energy_model() -> energy());
 		struct timeval tv;
 		GetTime(&tv);
 		fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
-		fprintf(stderr, "Target %d has energyc %f J now\n", sensor -> address(), sensor -> energy_model() -> energy());
 		fflush(stderr);
 		s.schedule(this, &charged_, charging_time);
 		break;
 	case REACHED:
 		charging_time = (em -> initialenergy() - remaining) / 0.3;
 		em -> DecrRcvEnergy(charging_time, -0.3);
+		//fprintf(stderr, "Target %d has energyc %f J now\n", sensor -> address(), sensor -> energy_model() -> energy());
 		if (em -> energy() > em -> initialenergy()) {
 			em -> setenergy(em->initialenergy());
 		}
+		fprintf(stderr, "Target %d has energyc %f J now\n", sensor -> address(), sensor -> energy_model() -> energy());
 		app -> ack();
 		app -> set_state(CHARGED);
 		fprintf(stderr, "WCVHandler::handle()\n");

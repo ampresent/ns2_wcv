@@ -137,7 +137,7 @@ handle TPPPingSenderApp::setupSubscription()
   attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
   attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
   attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
-  attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
+  //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::IS, 54.00));
   attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
@@ -166,7 +166,7 @@ handle TPPPingSenderApp::setupPublication()
 
   attrs.push_back(LatitudeAttr.make(NRAttribute::IS, latitude));
   attrs.push_back(LongitudeAttr.make(NRAttribute::IS, longitude));
-  attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
+  //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
   attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
 

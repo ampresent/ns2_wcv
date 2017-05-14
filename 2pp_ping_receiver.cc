@@ -55,6 +55,10 @@ public:
 int TPPPingReceiverApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "subscribe") == 0) {
+      if (get_state() == CHARGED && subHandle_) {
+	 DiffPrintWithTime(DEBUG_ALWAYS, "unsubscribe %u\n", subHandle_);
+         dr_ -> unsubscribe(subHandle_);
+      }
       run();
       return TCL_OK;
     }
@@ -236,7 +240,7 @@ handle TPPPingReceiverApp::setupSubscription()
   attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::GT, 54.78));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::LE, 87.32));
-  attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));
+  //attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));
   attrs.push_back(EnergyAttr.make(NRAttribute::LT, 0.8));
 
   handle h = dr_->subscribe(&attrs, mr_);

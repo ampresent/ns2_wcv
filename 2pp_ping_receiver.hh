@@ -68,11 +68,17 @@ public:
   void schedule();
 
   States get_state() {
+          struct timeval tmv;
+	  GetTime(&tmv);
+          fprintf(stderr, "%ld.%06ld : ", tmv.tv_sec, (long int) tmv.tv_usec);
 	  fprintf(stderr, "Get status %s\n", state_str[wcv_state]);
 	  fflush(stderr);
 	  return wcv_state;
   }
   void set_state(States s) {
+          struct timeval tmv;
+	  GetTime(&tmv);
+          fprintf(stderr, "%ld.%06ld : ", tmv.tv_sec, (long int) tmv.tv_usec);
 	  fprintf(stderr, "Set status %s\n", state_str[s]);
 	  fflush(stderr);
 	  wcv_state = s; 
