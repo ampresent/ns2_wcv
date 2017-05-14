@@ -101,9 +101,9 @@ $ns_ node-config -adhocRouting $val(rp) \
   -macTrace ON \
   #-movementTrace OFF \
                 -energyModel "EnergyModel"\
-                -initialEnergy 100\
+                -initialEnergy 1\
                 -rxPower 0.3\
-                -txPower 0.3\
+                -txPower 0.5\
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
@@ -146,24 +146,18 @@ set snk_ [new Application/DiffApp/PingReceiver/OPP]
 $ns_ attach-diffapp $node_(0) $src_(0)
 $ns_ attach-diffapp $node_(1) $src_(1)
 $ns_ attach-diffapp $node_(2) $src_(2)
+$node_(4) NodeLabel wcv
+$ns_ attach-diffapp $node_(4) $wcv_
+$node_(4) setenergy 10
 
 $ns_ attach-diffapp $node_(0) $con_(0)
 $ns_ attach-diffapp $node_(1) $con_(1)
 $ns_ attach-diffapp $node_(2) $con_(2)
-
 $ns_ attach-diffapp $node_(3) $snk_
-$ns_ at 1.3 "$con_(0) publish"
-$ns_ at 3.3 "$con_(1) publish"
-$ns_ at 5.3 "$con_(2) publish"
-$ns_ at 10.0 "$snk_ subscribe"
 
-$node_(4) NodeLabel wcv
-$ns_ attach-diffapp $node_(4) $wcv_
-$ns_ at 1.3 "$src_(1) publish"
-$ns_ at 3.456 "$wcv_ subscribe"
-$ns_ at 20.0 "$src_(2) publish"
-$ns_ at 80.0 "$src_(1) publish"
-$ns_ at 90.0 "$wcv_ subscribe"
+source ./data_flow
+source ./charging_request
+
 
 # defines the node size in nam
 for {set i 0} {$i < $val(nn)} {incr i} {
