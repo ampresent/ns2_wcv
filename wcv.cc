@@ -39,8 +39,8 @@ void WCVHandler::handle(Event* e) {
 		fflush(stderr);
 		app -> run();
 		break;
-	case HOLD:
-		app -> set_state(RECEIVING);
+	//case HOLD:
+	//	app -> set_state(RECEIVING);
 	case RECEIVING:
 		app -> set_state(SCHEDULING);
 		app -> schedule();

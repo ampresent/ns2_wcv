@@ -55,10 +55,6 @@ public:
 int TPPPingReceiverApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "subscribe") == 0) {
-      if (get_state() == CHARGED && subHandle_) {
-	 DiffPrintWithTime(DEBUG_ALWAYS, "unsubscribe %u\n", subHandle_);
-         dr_ -> unsubscribe(subHandle_);
-      }
       run();
       return TCL_OK;
     }
@@ -202,8 +198,12 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 void TPPPingReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
   if (front == rear) {
-	  
-	  set_state(HOLD);
+          if (subHandle_) {
+             DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
+             dr_ -> unsubscribe(subHandle_);
+          }
+	  set_state(RECEIVING);
+	  subHandle_ = setupSubscription();
 	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
 	  node -> giveup_sched(wcv_handler);
 	 
@@ -258,8 +258,10 @@ void TPPPingReceiverApp::run()
 {
   // Other states indicates WCV is still running
   if (get_state() == CHARGED) {
-	  fprintf(stderr, "TPPPingReceiverApp::run()\n");
-	  fflush(stderr);
+          if (subHandle_) {
+             DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
+             dr_ -> unsubscribe(subHandle_);
+          }
 	  set_state(RECEIVING);
 	  subHandle_ = setupSubscription();
 	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());

@@ -190,6 +190,14 @@ void TPPPingSenderApp::run()
 #endif // INTERATIVE
 
   // Setup publication and subscription
+  if (subHandle_) {
+          DiffPrintWithTime(DEBUG_ALWAYS, "Sender unsubscribe %u\n", subHandle_);
+	  dr_ -> unsubscribe(subHandle_);
+  }
+  if (pubHandle_) {
+          DiffPrintWithTime(DEBUG_ALWAYS, "Sender unpublish %u\n", pubHandle_);
+	  dr_ -> unpublish(pubHandle_);
+  }
   subHandle_ = setupSubscription();
   pubHandle_ = setupPublication();
 
