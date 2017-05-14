@@ -41,12 +41,15 @@
 // which carries forward this exception.
 
 #include "ping.hh"
+#include <cmath>
 
 NRSimpleAttributeFactory<char *> TargetAttr(NRAttribute::TARGET_KEY, NRAttribute::STRING_TYPE);
 NRSimpleAttributeFactory<int> AppCounterAttr(COUNTER_KEY, NRAttribute::INT32_TYPE);
 NRSimpleAttributeFactory<void *> TimeAttr(TIME_KEY, NRAttribute::BLOB_TYPE);
 NRSimpleAttributeFactory<double> EnergyAttr(8808, NRAttribute::FLOAT64_TYPE);
 NRSimpleAttributeFactory<int> IDAttr(8809, NRAttribute::INT32_TYPE);
+
+const double DX = 1.1, DY = 1.1, DD = sqrt(DX*DX + DY*DY), EPS = 1e-7;
 
 char * state_str[] = {
 	"IDLE",

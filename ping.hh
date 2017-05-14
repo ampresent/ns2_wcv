@@ -59,6 +59,7 @@ extern NRSimpleAttributeFactory<float> LongitudeAttr;
 extern NRSimpleAttributeFactory<float> LatitudeAttr;
 extern NRSimpleAttributeFactory<double> EnergyAttr;
 extern NRSimpleAttributeFactory<int> IDAttr;
+extern const double DX, DY, DD, EPS;
 
 class EventTime {
 public:

@@ -124,12 +124,16 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 		  }
 	  }
 	  if (!exist) {
-		  req_queue[rear].lat = lat;
-		  req_queue[rear].lon = lon;
-		  req_queue[rear].energy = energy;
-		  req_queue[rear].handle = id;
-		  rear = (rear + 1) % 3;
-		  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
+		  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+		  DiffPrint(DEBUG_ALWAYS, "sqrt((%lf - %lf)*(%lf - %lf) + (%lf - %lf)*(%lf - %lf)) > %lf => %d\n", node->X(), lon, node->X(), lon, node->Y(), lat, node->Y(), lat, DD, sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS);
+		  if (sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS) {
+			  req_queue[rear].lat = lat;
+			  req_queue[rear].lon = lon;
+			  req_queue[rear].energy = energy;
+			  req_queue[rear].handle = id;
+			  rear = (rear + 1) % 3;
+			  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
+		  }
 	  }
   }else{
 	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");
@@ -219,7 +223,7 @@ void TPPPingReceiverApp::schedule(){
 	  delete wcv_handler;
   MobileNode* sender = (MobileNode*)Node::get_node_by_address(popout.handle);
   wcv_handler = new WCVHandler(node, this, sender, popout.energy);
-  if (node->set_destination(popout.lon+1.1, popout.lat-1.1, 1, wcv_handler)) {
+  if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
     DiffPrint(DEBUG_ALWAYS, "Failed to set_destination, wait for retry\n");
     set_state(SCHEDULING);
     return;
