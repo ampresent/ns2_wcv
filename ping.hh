@@ -74,6 +74,7 @@ enum States {
 	CHARGED,
 	RECEIVING,
 	RECEIVED,
-	SCHEDULING
+	SCHEDULING,
+	HOLD
 };
 #endif // !_PING_HH_

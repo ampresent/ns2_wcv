@@ -32,7 +32,7 @@ class WCVNode : public MobileNode {
 	public:
 		int set_destination(double x, double y, double s, WCVHandler* wcv_handler);
 		void recv(WCVHandler* wcv_handler);
-		//void giveup_sched(WCVHandler* wcv_handler);
+		void giveup_sched(WCVHandler* wcv_handler);
 };
 
 #endif // ns_wcv_h

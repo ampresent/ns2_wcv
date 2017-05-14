@@ -202,12 +202,12 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 void TPPPingReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
   if (front == rear) {
-	  /*
+	  
 	  set_state(HOLD);
 	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
 	  node -> giveup_sched(wcv_handler);
-	  */
-	  set_state(CHARGED);
+	 
+	  //set_state(CHARGED);
 	  return;
   }
   set_state(IDLE);

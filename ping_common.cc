@@ -58,5 +58,6 @@ char * state_str[] = {
 	"CHARGED",
 	"RECEIVING",
 	"RECEIVED",
-	"SCHEDULING"
+	"SCHEDULING",
+	"HOLD"
 };
