@@ -99,8 +99,10 @@ void TPPPingSenderReceive::recv(NRAttrVec *data, NR::handle my_handle)
 void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 {
   NRSimpleAttribute<int> *nrclass = NULL;
+  NRSimpleAttribute<int> *nralgorithm = NULL;
 
   nrclass = NRClassAttr.find(data);
+  nralgorithm = NRAlgorithmAttr.find(data);
 
   if (!nrclass){
     DiffPrint(DEBUG_ALWAYS, "Received a BAD packet !\n");
@@ -111,7 +113,7 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 
   case NRAttribute::INTEREST_CLASS:
 
-    DiffPrint(DEBUG_ALWAYS, "Received an Interest message !\n");
+    DiffPrint(DEBUG_ALWAYS, "Received an Interest message ! With algorithm: %d\n", nralgorithm->getVal());
     num_subscriptions_++;
     break;
 
