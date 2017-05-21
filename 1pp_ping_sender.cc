@@ -112,13 +112,13 @@ void OPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 
   case NRAttribute::INTEREST_CLASS:
 
-    DiffPrint(DEBUG_ALWAYS, "1PP Received an Interest message !\n");
+    //DiffPrint(DEBUG_ALWAYS, "1PP Received an Interest message !\n");
     num_subscriptions_++;
     break;
 
   case NRAttribute::DISINTEREST_CLASS:
 
-    DiffPrint(DEBUG_ALWAYS, "1PP Received a Disinterest message !\n");
+    //DiffPrint(DEBUG_ALWAYS, "1PP Received a Disinterest message !\n");
     num_subscriptions_--;
     break;
 
