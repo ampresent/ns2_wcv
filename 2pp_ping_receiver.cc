@@ -110,25 +110,26 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
 	  if ((rear+1)%3 == front) {
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
-		  return;
-	  }
-	  bool exist = false;
-	  for (unsigned i=front;i!=rear;i=(i+1)%3) {
-		  if (req_queue[i].lat==lat && req_queue[i].lon==lon){
-			  exist = true;
-			  break;
+	  } else {
+		  bool exist = false;
+		  for (unsigned i=front;i!=rear;i=(i+1)%3) {
+			  if (req_queue[i].lat==lat && req_queue[i].lon==lon){
+				  exist = true;
+				  DiffPrintWithTime(DEBUG_ALWAYS, "Request already exists!\n");
+				  break;
+			  }
 		  }
-	  }
-	  if (!exist) {
-		  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-		  DiffPrint(DEBUG_ALWAYS, "sqrt((%lf - %lf)*(%lf - %lf) + (%lf - %lf)*(%lf - %lf)) > %lf => %d\n", node->X(), lon, node->X(), lon, node->Y(), lat, node->Y(), lat, DD, sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS);
-		  if (sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS) {
-			  req_queue[rear].lat = lat;
-			  req_queue[rear].lon = lon;
-			  req_queue[rear].energy = energy;
-			  req_queue[rear].handle = id;
-			  rear = (rear + 1) % 3;
-			  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
+		  if (!exist) {
+			  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
+			  DiffPrint(DEBUG_ALWAYS, "sqrt((%lf - %lf)*(%lf - %lf) + (%lf - %lf)*(%lf - %lf)) > %lf => %d\n", node->X(), lon, node->X(), lon, node->Y(), lat, node->Y(), lat, DD, sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS);
+			  if (sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS) {
+				  req_queue[rear].lat = lat;
+				  req_queue[rear].lon = lon;
+				  req_queue[rear].energy = energy;
+				  req_queue[rear].handle = id;
+				  rear = (rear + 2) % 3;
+				  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
+			  }
 		  }
 	  }
   }else{
