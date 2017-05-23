@@ -69,11 +69,11 @@ int WCVNode::set_destination(double x, double y, double speed, WCVHandler* wcv_h
 
 void WCVNode::recv(WCVHandler* wcv_handler) {
 	Scheduler& s = Scheduler::instance();
-	s.schedule(wcv_handler, &pos_intr_, 4);
+	s.schedule(wcv_handler, &pos_intr_, RECV_PERIOD);
 }
 
 void WCVNode::giveup_sched(WCVHandler* wcv_handler) {
 	Scheduler& s = Scheduler::instance();
-	s.schedule(wcv_handler, &pos_intr_, 10);
+	s.schedule(wcv_handler, &pos_intr_, RECV_PERIOD);
 }
 

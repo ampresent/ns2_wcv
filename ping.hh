@@ -61,6 +61,10 @@ extern NRSimpleAttributeFactory<double> EnergyAttr;
 extern NRSimpleAttributeFactory<int> IDAttr;
 extern const double DX, DY, DD, EPS;
 
+#define MODULER 6
+#define MAX_SIZE (MODULER - 1)
+#define RECV_PERIOD 4
+
 class EventTime {
 public:
   long seconds_;
