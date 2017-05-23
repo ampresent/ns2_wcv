@@ -96,7 +96,7 @@ private:
 	  double energy;
   };
 
-  struct request req_queue[3];
+  struct request req_queue[MODULER];
   unsigned front;
   unsigned rear;
 

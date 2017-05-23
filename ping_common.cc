@@ -61,3 +61,6 @@ char * state_str[] = {
 	"SCHEDULING",
 	"HOLD"
 };
+
+const unsigned MODULER = 6;
+const unsigned MAX_SIZE = MODULER - 1;

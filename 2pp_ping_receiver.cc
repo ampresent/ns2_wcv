@@ -108,11 +108,11 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 	  id = idAttr->getVal();
 
 	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
-	  if ((rear+1)%3 == front) {
+	  if ((rear+1)%MODULER == front) {
 		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
 	  } else {
 		  bool exist = false;
-		  for (unsigned i=front;i!=rear;i=(i+1)%3) {
+		  for (unsigned i=front;i!=rear;i=(i+1)%MODULER) {
 			  if (req_queue[i].lat==lat && req_queue[i].lon==lon){
 				  exist = true;
 				  DiffPrintWithTime(DEBUG_ALWAYS, "Request already exists!\n");
@@ -127,7 +127,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 				  req_queue[rear].lon = lon;
 				  req_queue[rear].energy = energy;
 				  req_queue[rear].handle = id;
-				  rear = (rear + 2) % 3;
+				  rear = (rear + 1) % MODULER;
 				  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 			  }
 		  }
@@ -213,7 +213,7 @@ void TPPPingReceiverApp::schedule(){
   }
   set_state(IDLE);
   struct request popout = req_queue[front];
-  for (int i=front;i!=rear;i=(i+1)%3) {
+  for (int i=front;i!=rear;i=(i+1)%MODULER) {
 	  fprintf(stderr, "req_queue[%d] = {%lf, %lf, %lf}\n", i, req_queue[i].lon, req_queue[i].lat, req_queue[i].energy);
 	  fflush(stderr);
   }
@@ -230,11 +230,11 @@ void TPPPingReceiverApp::schedule(){
     return;
   }
   set_state(MOVING);
-  //front = (front + 1) % 3;
+  //front = (front + 1) % MODULER;
 }
 
 void TPPPingReceiverApp::ack() {
-  front = (front + 1) % 3;
+  front = (front + 1) % MODULER;
 }
 
 handle TPPPingReceiverApp::setupSubscription()
