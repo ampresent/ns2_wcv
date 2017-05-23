@@ -86,6 +86,11 @@ int TPPPingSenderApp::command(int argc, const char*const* argv) {
       run();
       return TCL_OK;
     }
+  } else if (argc == 3) {
+      if (strcmp(argv[1], "publish") == 0) {
+          run(atof(argv[2]));
+          return TCL_OK;
+      }
   }
   return DiffApp::command(argc, argv);
 }
@@ -131,7 +136,7 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
   }
 }
 
-handle TPPPingSenderApp::setupSubscription()
+handle TPPPingSenderApp::setupSubscription(double fake)
 {
   NRAttrVec attrs;
   MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
@@ -142,7 +147,11 @@ handle TPPPingSenderApp::setupSubscription()
   //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::IS, 54.00));
-  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+  if (fake < 0) {
+	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+  } else {
+	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
+  }
 
   handle h = dr_->subscribe(&attrs, mr_);
 
@@ -151,7 +160,7 @@ handle TPPPingSenderApp::setupSubscription()
   return h;
 }
 
-handle TPPPingSenderApp::setupPublication()
+handle TPPPingSenderApp::setupPublication(double fake)
 {
   NRAttrVec attrs;
 
@@ -169,7 +178,11 @@ handle TPPPingSenderApp::setupPublication()
   attrs.push_back(LatitudeAttr.make(NRAttribute::IS, latitude));
   attrs.push_back(LongitudeAttr.make(NRAttribute::IS, longitude));
   //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
-  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+  if (fake < 0) {
+	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+  } else {
+	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
+  }
   attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
 
   handle h = dr_->publish(&attrs);
@@ -179,7 +192,11 @@ handle TPPPingSenderApp::setupPublication()
   return h;
 }
 
-void TPPPingSenderApp::run()
+void TPPPingSenderApp::run() {
+	run(-1);
+}
+
+void TPPPingSenderApp::run(double fake)
 {
   struct timeval tmv;
 #ifndef NS_DIFFUSION
@@ -200,8 +217,8 @@ void TPPPingSenderApp::run()
           DiffPrintWithTime(DEBUG_ALWAYS, "Sender unpublish %u\n", pubHandle_);
 	  dr_ -> unpublish(pubHandle_);
   }
-  subHandle_ = setupSubscription();
-  pubHandle_ = setupPublication();
+  subHandle_ = setupSubscription(fake);
+  pubHandle_ = setupPublication(fake);
 
   // Create time attribute
   GetTime(&tmv);

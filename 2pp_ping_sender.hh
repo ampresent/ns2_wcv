@@ -80,6 +80,7 @@ public:
   };
 
   void run();
+  void run(double fake);
   void recv(NRAttrVec *data, NR::handle my_handle);
 
 private:
@@ -98,8 +99,8 @@ private:
   NRSimpleAttribute<float> *latitudeAttr_;
   EventTime *lastEventTime_;
 
-  handle setupSubscription();
-  handle setupPublication();
+  handle setupSubscription(double fake);
+  handle setupPublication(double fake);
 #ifdef NS_DIFFUSION
   TPPPingSendDataTimer sdt_;
 #endif // NS_DIFFUSION
