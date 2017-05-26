@@ -77,7 +77,7 @@ void TPPPingSenderApp::send()
   }
 
   // re-schedule the timer 
-  sdt_.resched(SEND_DATA_INTERVAL);
+  // sdt_.resched(SEND_DATA_INTERVAL);
 }
 
 int TPPPingSenderApp::command(int argc, const char*const* argv) {
