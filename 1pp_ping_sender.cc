@@ -78,7 +78,7 @@ void OPPPingSenderApp::send()
   }
 
   // re-schedule the timer 
-  sdt_.resched(SEND_DATA_INTERVAL);
+  // sdt_.resched(SEND_DATA_INTERVAL);
 }
 
 int OPPPingSenderApp::command(int argc, const char*const* argv) {
