@@ -68,7 +68,7 @@ void TPPPingSenderApp::send()
     lastEventTime_->useconds_ = tmv.tv_usec;
 
     // Send data probe
-    DiffPrint(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
     dr_->send(pubHandle_, &data_attr_);
 
     // Update counter
@@ -110,7 +110,7 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
   nralgorithm = NRAlgorithmAttr.find(data);
 
   if (!nrclass){
-    DiffPrint(DEBUG_ALWAYS, "Received a BAD packet !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received a BAD packet !\n");
     return;
   }
 
@@ -118,19 +118,19 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 
   case NRAttribute::INTEREST_CLASS:
 
-    DiffPrint(DEBUG_ALWAYS, "Received an Interest message ! With algorithm: %d\n", nralgorithm->getVal());
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received an Interest message ! With algorithm: %d\n", nralgorithm->getVal());
     num_subscriptions_++;
     break;
 
   case NRAttribute::DISINTEREST_CLASS:
 
-    DiffPrint(DEBUG_ALWAYS, "Received a Disinterest message !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received a Disinterest message !\n");
     num_subscriptions_--;
     break;
 
   default:
 
-    DiffPrint(DEBUG_ALWAYS, "Received an unknown message (%d)!\n", nrclass->getVal());
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received an unknown message (%d)!\n", nrclass->getVal());
     break;
 
   }
@@ -152,6 +152,7 @@ handle TPPPingSenderApp::setupSubscription(double fake)
   } else {
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
   }
+
 
   handle h = dr_->subscribe(&attrs, mr_);
 
@@ -270,7 +271,7 @@ void TPPPingSenderApp::run(double fake)
       lastEventTime_->useconds_ = tmv.tv_usec;
 
       // Send data probe
-      DiffPrint(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
+      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
       retval = dr_->send(pubHandle_, &data_attr_);
 
       // Update counter
