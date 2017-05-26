@@ -73,7 +73,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 {
   /*
   if (get_state() != RECEIVING) {
-    DiffPrint(DEBUG_ALWAYS, "Deaf for now\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Deaf for now\n");
     return;
   }
   */
@@ -100,16 +100,16 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 
   float lat, lon, energy;
   int id;
-  DiffPrint(DEBUG_ALWAYS, "Resolve packet\n");
+  DiffPrintWithTime(DEBUG_ALWAYS, "Resolve packet\n");
   if (latitudeAttr && longitudeAttr){
 	  lat = latitudeAttr->getVal();
 	  lon = longitudeAttr->getVal();
 	  energy = energyAttr->getVal();
 	  id = idAttr->getVal();
 
-	  DiffPrint(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
 	  if ((rear+1)%MODULER == front) {
-		  DiffPrint(DEBUG_ALWAYS, "Request Queue full !\n");
+		  DiffPrintWithTime(DEBUG_ALWAYS, "Request Queue full !\n");
 	  } else {
 		  bool exist = false;
 		  for (unsigned i=front;i!=rear;i=(i+1)%MODULER) {
@@ -121,24 +121,24 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 		  }
 		  if (!exist) {
 			  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-			  DiffPrint(DEBUG_ALWAYS, "sqrt((%lf - %lf)*(%lf - %lf) + (%lf - %lf)*(%lf - %lf)) > %lf => %d\n", node->X(), lon, node->X(), lon, node->Y(), lat, node->Y(), lat, DD, sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS);
+			  DiffPrintWithTime(DEBUG_ALWAYS, "sqrt((%lf - %lf)*(%lf - %lf) + (%lf - %lf)*(%lf - %lf)) > %lf => %d\n", node->X(), lon, node->X(), lon, node->Y(), lat, node->Y(), lat, DD, sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS);
 			  if (sqrt((node->X() - lon)*(node->X() - lon) + (node->Y() - lat)*(node->Y() - lat)) > DD + EPS) {
 				  req_queue[rear].lat = lat;
 				  req_queue[rear].lon = lon;
 				  req_queue[rear].energy = energy;
 				  req_queue[rear].handle = id;
 				  rear = (rear + 1) % MODULER;
-				  DiffPrint(DEBUG_ALWAYS, "Append request to Request Queue !\n");
+				  DiffPrintWithTime(DEBUG_ALWAYS, "Append request to Request Queue !\n");
 			  }
 		  }
 	  }
   }else{
-	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Failed to resolve packet\n");
   }
   /*
 
   if (!counterAttr || !timeAttr){
-    DiffPrint(DEBUG_ALWAYS, "Received a BAD packet !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received a BAD packet !\n");
     PrintAttrs(data);
     return;
   }
@@ -154,7 +154,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
     // Time's not synchronized
     delay_seconds = -1;
     delay_useconds = 0;
-    DiffPrint(DEBUG_ALWAYS, "Error calculating delay !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Error calculating delay !\n");
   }
   else{
     delay_seconds = delay_seconds - probe_event->seconds_;
@@ -176,14 +176,14 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
     if (counterAttr->getVal() < last_seq_recv_){
       // Multiple sources detected, disabling statistics
       last_seq_recv_ = -1;
-      DiffPrint(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f!\n",
+      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f!\n",
 		((DiffusionRouting *)dr_)->getNodeId(),
 		counterAttr->getVal(), total_delay);
     }
     else{
       last_seq_recv_ = counterAttr->getVal();
       num_msg_recv_++;
-      DiffPrint(DEBUG_ALWAYS, "Node%d: Received data: %d, total latency = %f, %% messages received: %f !\n",
+      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data: %d, total latency = %f, %% messages received: %f !\n",
 		((DiffusionRouting *)dr_)->getNodeId(),
 		last_seq_recv_, total_delay,
 		(float) ((num_msg_recv_ * 100.00) /
@@ -191,7 +191,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
     }
   }
   else{
-    DiffPrint(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f !\n",
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f !\n",
 	      ((DiffusionRouting *)dr_)->getNodeId(),
 	      counterAttr->getVal(), total_delay);
   }
@@ -220,14 +220,14 @@ void TPPPingReceiverApp::schedule(){
 	  fflush(stderr);
   }
   WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-  DiffPrint(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
 
   if (wcv_handler)
 	  delete wcv_handler;
   MobileNode* sender = (MobileNode*)Node::get_node_by_address(popout.handle);
   wcv_handler = new WCVHandler(node, this, sender, popout.energy);
   if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
-    DiffPrint(DEBUG_ALWAYS, "Failed to set_destination, wait for retry\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, wait for retry\n");
     set_state(SCHEDULING);
     return;
   }
