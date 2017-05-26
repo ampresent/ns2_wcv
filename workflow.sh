@@ -2,7 +2,7 @@ if ! [ -d "/tmp/ns" ]; then
 	cd /tmp/
 	yaourt -G ns
 fi
-sh -c "cd ~/wsn/ns-2.35/diffusion3/apps/ping; echo Start Coding; zsh"
+sh -c "cd /home/wuyihao/wsn/ns-2.35/diffusion3/apps/ping; echo Start Coding; zsh"
 echo "Start Building"
 
 if [ "$1" != "try" ]; then
