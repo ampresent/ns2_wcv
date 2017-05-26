@@ -135,6 +135,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   }else{
 	  DiffPrint(DEBUG_ALWAYS, "Failed to resolve packet\n");
   }
+  /*
 
   if (!counterAttr || !timeAttr){
     DiffPrint(DEBUG_ALWAYS, "Received a BAD packet !\n");
@@ -194,6 +195,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 	      ((DiffusionRouting *)dr_)->getNodeId(),
 	      counterAttr->getVal(), total_delay);
   }
+  */
 }
 
 void TPPPingReceiverApp::schedule(){
