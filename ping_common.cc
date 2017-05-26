@@ -62,5 +62,3 @@ char * state_str[] = {
 	"HOLD"
 };
 
-const unsigned MODULER = 6;
-const unsigned MAX_SIZE = MODULER - 1;
