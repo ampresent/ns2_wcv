@@ -184,6 +184,10 @@ handle TPPPingSenderApp::setupPublication(double fake)
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
   }
   attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
+  struct timeval tmv;
+  GetTime(&tmv);
+  timeAttr_ = TimeAttr.make(NRAttribute::IS, (void *) &tmv, sizeof(tmv));
+  attrs.push_back(timeAttr_);
 
   handle h = dr_->publish(&attrs);
 

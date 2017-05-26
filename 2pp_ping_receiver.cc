@@ -88,6 +88,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   long delay_useconds;
   float total_delay;
   struct timeval tmv;
+  struct timeval* tmv2;
 
   GetTime(&tmv);
 
@@ -106,8 +107,9 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
 	  lon = longitudeAttr->getVal();
 	  energy = energyAttr->getVal();
 	  id = idAttr->getVal();
+	  tmv2 = (struct timeval *) timeAttr->getVal();
 
-	  DiffPrintWithTime(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d)\n", lon ,lat, energy, id);
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Received request (%f, %f, %f, %d, %ld.%06ld)\n", lon ,lat, energy, id, tmv2->tv_sec, tmv2->tv_usec);
 	  if ((rear+1)%MODULER == front) {
 		  DiffPrintWithTime(DEBUG_ALWAYS, "Request Queue full !\n");
 	  } else {
