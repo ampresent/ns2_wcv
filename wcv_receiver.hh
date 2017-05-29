@@ -1,9 +1,9 @@
 //
-// ping_receiver.hh : Ping Receiver Include File
+// wcv_receiver.hh : Ping Receiver Include File
 // author           : Fabio Silva
 //
 // Copyright (C) 2000-2002 by the University of Southern California
-// $Id: 2pp_ping_receiver.hh,v 1.2 2005/09/13 04:53:46 tomh Exp $
+// $Id: wcv_receiver.hh,v 1.2 2005/09/13 04:53:46 tomh Exp $
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License,
@@ -40,8 +40,8 @@
 // this exception also makes it possible to release a modified version
 // which carries forward this exception.
 
-#ifndef _PING_RECEIVER_HH_
-#define _PING_RECEIVER_HH_
+#ifndef _WCV_RECEIVER_HH_
+#define _WCV_RECEIVER_HH_
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -52,15 +52,15 @@
 
 extern char * state_str[];
 
-class TPPPingReceiverReceive;
+class WCVReceiverReceive;
 
-class TPPPingReceiverApp : public DiffApp {
+class WCVReceiverApp : public DiffApp {
 public:
 #ifdef NS_DIFFUSION
-  TPPPingReceiverApp();
+  WCVReceiverApp();
   int command(int argc, const char*const* argv);
 #else
-  TPPPingReceiverApp(int argc, char **argv);
+  WCVReceiverApp(int argc, char **argv);
 #endif // NS_DIFFUSION
 
   void recv(NRAttrVec *data, NR::handle my_handle);
@@ -87,7 +87,7 @@ public:
 
 private:
   // NR Specific variables
-  TPPPingReceiverReceive *mr_;
+  WCVReceiverReceive *mr_;
   handle subHandle_;
   struct request{
 	  NR::handle handle;
@@ -110,12 +110,12 @@ private:
   States wcv_state;
 };
 
-class TPPPingReceiverReceive : public NR::Callback {
+class WCVReceiverReceive : public NR::Callback {
 public:
-  TPPPingReceiverReceive(TPPPingReceiverApp *app) : app_(app) {};
+  WCVReceiverReceive(WCVReceiverApp *app) : app_(app) {};
   void recv(NRAttrVec *data, NR::handle my_handle);
 
-  TPPPingReceiverApp *app_;
+  WCVReceiverApp *app_;
 };
 
 #endif // !_PING_RECEIVER_HH_

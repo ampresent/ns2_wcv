@@ -3,7 +3,7 @@
 // author           : Fabio Silva
 //
 // Copyright (C) 2000-2002 by the University of Southern California
-// $Id: 2pp_ping_receiver.cc,v 1.4 2010/03/08 05:54:49 tom_henderson Exp $
+// $Id: wcv_receiver.cc,v 1.4 2010/03/08 05:54:49 tom_henderson Exp $
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License,
@@ -40,19 +40,19 @@
 // this exception also makes it possible to release a modified version
 // which carries forward this exception.
 
-#include "2pp_ping_receiver.hh"
+#include "wcv_receiver.hh"
 #include "wcv.h"
 
 #ifdef NS_DIFFUSION
-static class TPPPingReceiverAppClass : public TclClass {
+static class WCVReceiverAppClass : public TclClass {
 public:
-    TPPPingReceiverAppClass() : TclClass("Application/DiffApp/PingReceiver/TPP") {}
+    WCVReceiverAppClass() : TclClass("Application/DiffApp/PingReceiver/WCV") {}
     TclObject* create(int , const char*const* ) {
-	    return(new TPPPingReceiverApp());
+	    return(new WCVReceiverApp());
     }
 } class_ping_receiver;
 
-int TPPPingReceiverApp::command(int argc, const char*const* argv) {
+int WCVReceiverApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "subscribe") == 0) {
       run();
@@ -64,12 +64,12 @@ int TPPPingReceiverApp::command(int argc, const char*const* argv) {
 
 #endif // NS_DIFFUSION
 
-void TPPPingReceiverReceive::recv(NRAttrVec *data, NR::handle my_handle)
+void WCVReceiverReceive::recv(NRAttrVec *data, NR::handle my_handle)
 {
   app_->recv(data, my_handle);
 }
 
-void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
+void WCVReceiverApp::recv(NRAttrVec *data, NR::handle h)
 {
   /*
   if (get_state() != RECEIVING) {
@@ -200,7 +200,7 @@ void TPPPingReceiverApp::recv(NRAttrVec *data, NR::handle h)
   */
 }
 
-void TPPPingReceiverApp::schedule(){
+void WCVReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
   if (front == rear) {
           if (subHandle_) {
@@ -237,11 +237,11 @@ void TPPPingReceiverApp::schedule(){
   //front = (front + 1) % MODULER;
 }
 
-void TPPPingReceiverApp::ack() {
+void WCVReceiverApp::ack() {
   front = (front + 1) % MODULER;
 }
 
-handle TPPPingReceiverApp::setupSubscription()
+handle WCVReceiverApp::setupSubscription()
 {
   NRAttrVec attrs;
 
@@ -259,7 +259,7 @@ handle TPPPingReceiverApp::setupSubscription()
   return h;
 }
 
-void TPPPingReceiverApp::run()
+void WCVReceiverApp::run()
 {
   // Other states indicates WCV is still running
   if (get_state() == CHARGED) {
@@ -284,9 +284,9 @@ void TPPPingReceiverApp::run()
 }
 
 #ifdef NS_DIFFUSION
-TPPPingReceiverApp::TPPPingReceiverApp()
+WCVReceiverApp::WCVReceiverApp()
 #else
-TPPPingReceiverApp::TPPPingReceiverApp(int argc, char **argv)
+WCVReceiverApp::WCVReceiverApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
   set_state(CHARGED);
@@ -299,7 +299,7 @@ TPPPingReceiverApp::TPPPingReceiverApp(int argc, char **argv)
   num_msg_recv_ = 0;
   first_msg_recv_ = -1;
 
-  mr_ = new TPPPingReceiverReceive(this);
+  mr_ = new WCVReceiverReceive(this);
 
 #ifndef NS_DIFFUSION
   parseCommandLine(argc, argv);
@@ -310,9 +310,9 @@ TPPPingReceiverApp::TPPPingReceiverApp(int argc, char **argv)
 #ifndef NS_DIFFUSION
 int main(int argc, char **argv)
 {
-  TPPPingReceiverApp *app;
+  WCVReceiverApp *app;
 
-  app = new TPPPingReceiverApp(argc, argv);
+  app = new WCVReceiverApp(argc, argv);
   app->run();
 
   return 0;

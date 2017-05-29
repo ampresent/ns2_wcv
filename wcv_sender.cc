@@ -3,7 +3,7 @@
 // author         : Fabio Silva
 //
 // Copyright (C) 2000-2002 by the University of Southern California
-// $Id: 2pp_ping_sender.cc,v 1.5 2011/10/02 22:32:34 tom_henderson Exp $
+// $Id: wcv_sender.cc,v 1.5 2011/10/02 22:32:34 tom_henderson Exp $
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License,
@@ -40,23 +40,23 @@
 // this exception also makes it possible to release a modified version
 // which carries forward this exception.
 
-#include "2pp_ping_sender.hh"
+#include "wcv_sender.hh"
 #include <unistd.h>
 
 #ifdef NS_DIFFUSION
-static class TPPPingSenderAppClass : public TclClass {
+static class WCVSenderAppClass : public TclClass {
 public:
-  TPPPingSenderAppClass() : TclClass("Application/DiffApp/PingSender/TPP") {}
+  WCVSenderAppClass() : TclClass("Application/DiffApp/PingSender/WCV") {}
   TclObject* create(int , const char*const*) {
-    return(new TPPPingSenderApp());
+    return(new WCVSenderApp());
   }
 } class_ping_sender;
 
-void TPPPingSendDataTimer::expire(Event *) {
+void WCVSendDataTimer::expire(Event *) {
   a_->send();
 }
 
-void TPPPingSenderApp::send()
+void WCVSenderApp::send()
 {
   struct timeval tmv;
 
@@ -80,7 +80,7 @@ void TPPPingSenderApp::send()
   // sdt_.resched(SEND_DATA_INTERVAL);
 }
 
-int TPPPingSenderApp::command(int argc, const char*const* argv) {
+int WCVSenderApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "publish") == 0) {
       run();
@@ -96,12 +96,12 @@ int TPPPingSenderApp::command(int argc, const char*const* argv) {
 }
 #endif // NS_DIFFUSION
 
-void TPPPingSenderReceive::recv(NRAttrVec *data, NR::handle my_handle)
+void WCVSenderReceive::recv(NRAttrVec *data, NR::handle my_handle)
 {
   app_->recv(data, my_handle);
 }
 
-void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
+void WCVSenderApp::recv(NRAttrVec *data, NR::handle )
 {
   NRSimpleAttribute<int> *nrclass = NULL;
   NRSimpleAttribute<int> *nralgorithm = NULL;
@@ -136,7 +136,7 @@ void TPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
   }
 }
 
-handle TPPPingSenderApp::setupSubscription(double fake)
+handle WCVSenderApp::setupSubscription(double fake)
 {
   NRAttrVec attrs;
   MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
@@ -161,7 +161,7 @@ handle TPPPingSenderApp::setupSubscription(double fake)
   return h;
 }
 
-handle TPPPingSenderApp::setupPublication(double fake)
+handle WCVSenderApp::setupPublication(double fake)
 {
   NRAttrVec attrs;
 
@@ -197,11 +197,11 @@ handle TPPPingSenderApp::setupPublication(double fake)
   return h;
 }
 
-void TPPPingSenderApp::run() {
+void WCVSenderApp::run() {
 	run(-1);
 }
 
-void TPPPingSenderApp::run(double fake)
+void WCVSenderApp::run(double fake)
 {
   struct timeval tmv;
 #ifndef NS_DIFFUSION
@@ -285,16 +285,16 @@ void TPPPingSenderApp::run(double fake)
 }
 
 #ifdef NS_DIFFUSION
-TPPPingSenderApp::TPPPingSenderApp() : sdt_(this)
+WCVSenderApp::WCVSenderApp() : sdt_(this)
 #else
-TPPPingSenderApp::TPPPingSenderApp(int argc, char **argv)
+WCVSenderApp::WCVSenderApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
 	global_debug_level=5;
   last_seq_sent_ = 0;
   num_subscriptions_ = 0;
 
-  mr_ = new TPPPingSenderReceive(this);
+  mr_ = new WCVSenderReceive(this);
 
 #ifndef NS_DIFFUSION
   parseCommandLine(argc, argv);
@@ -305,9 +305,9 @@ TPPPingSenderApp::TPPPingSenderApp(int argc, char **argv)
 #ifndef NS_DIFFUSION
 int main(int argc, char **argv)
 {
-  TPPPingSenderApp *app;
+  WCVSenderApp *app;
 
-  app = new TPPPingSenderApp(argc, argv);
+  app = new WCVSenderApp(argc, argv);
   app->run();
 
   return 0;

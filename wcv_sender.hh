@@ -3,7 +3,7 @@
 // author         : Fabio Silva
 //
 // Copyright (C) 2000-2002 by the University of Southern California
-// $Id: 2pp_ping_sender.hh,v 1.2 2005/09/13 04:53:46 tomh Exp $
+// $Id: wcv_sender.hh,v 1.2 2005/09/13 04:53:46 tomh Exp $
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License,
@@ -40,8 +40,8 @@
 // this exception also makes it possible to release a modified version
 // which carries forward this exception.
 
-#ifndef _PING_SENDER_HH_
-#define _PING_SENDER_HH_
+#ifndef _WCV_SENDER_HH_
+#define _WCV_SENDER_HH_
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -49,32 +49,32 @@
 
 #include "ping.hh"
 
-class TPPPingSenderReceive;
-class TPPPingSenderApp;
+class WCVSenderReceive;
+class WCVSenderApp;
 
 #define SEND_DATA_INTERVAL 5
 
 #ifdef NS_DIFFUSION
-class TPPPingSendDataTimer : public TimerHandler {
+class WCVSendDataTimer : public TimerHandler {
   public:
-  TPPPingSendDataTimer(TPPPingSenderApp *a) : TimerHandler() { a_ = a; }
+  WCVSendDataTimer(WCVSenderApp *a) : TimerHandler() { a_ = a; }
   void expire(Event *e);
 protected:
-  TPPPingSenderApp *a_;
+  WCVSenderApp *a_;
 };
 #endif //NS_DIFFUSION
 
-class TPPPingSenderApp : public DiffApp {
+class WCVSenderApp : public DiffApp {
 public:
 #ifdef NS_DIFFUSION
-  TPPPingSenderApp();
+  WCVSenderApp();
   int command(int argc, const char*const* argv);
   void send();
 #else
-  TPPPingSenderApp(int argc, char **argv);
+  WCVSenderApp(int argc, char **argv);
 #endif // NS_DIFFUSION
 
-  virtual ~TPPPingSenderApp()
+  virtual ~WCVSenderApp()
   {
     // Nothing to do
   };
@@ -85,7 +85,7 @@ public:
 
 private:
   // NR Specific variables
-  TPPPingSenderReceive *mr_;
+  WCVSenderReceive *mr_;
   handle subHandle_;
   handle pubHandle_;
 
@@ -102,16 +102,16 @@ private:
   handle setupSubscription(double fake);
   handle setupPublication(double fake);
 #ifdef NS_DIFFUSION
-  TPPPingSendDataTimer sdt_;
+  WCVSendDataTimer sdt_;
 #endif // NS_DIFFUSION
 };
 
-class TPPPingSenderReceive : public NR::Callback {
+class WCVSenderReceive : public NR::Callback {
 public:
-  TPPPingSenderReceive(TPPPingSenderApp *app) : app_(app) {};
+  WCVSenderReceive(WCVSenderApp *app) : app_(app) {};
   void recv(NRAttrVec *data, NR::handle my_handle);
 
-  TPPPingSenderApp *app_;
+  WCVSenderApp *app_;
 };
 
 #endif // !_PING_SENDER_HH_
