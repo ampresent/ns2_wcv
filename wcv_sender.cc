@@ -142,7 +142,7 @@ handle WCVSenderApp::setupSubscription(double fake)
   MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
 
   attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
-  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, WCV_ALGORITHM));
   attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
   //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
@@ -166,7 +166,7 @@ handle WCVSenderApp::setupPublication(double fake)
   NRAttrVec attrs;
 
   attrs.push_back(NRClassAttr.make(NRAttribute::IS, NRAttribute::DATA_CLASS));
-  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, WCV_ALGORITHM));
 
   double latitude, longitude, z;
 

@@ -246,7 +246,7 @@ handle WCVReceiverApp::setupSubscription()
   NRAttrVec attrs;
 
   attrs.push_back(NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS));
-  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::TWO_PHASE_PULL_ALGORITHM));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, WCV_ALGORITHM));
   //attrs.push_back(LatitudeAttr.make(NRAttribute::GT, 54.78));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::LE, 87.32));
   //attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));

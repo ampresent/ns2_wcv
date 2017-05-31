@@ -65,6 +65,8 @@ extern const double DX, DY, DD, EPS;
 #define MAX_SIZE (MODULER - 1)
 #define RECV_PERIOD 4
 
+#define WCV_ALGORITHM 13010
+
 class EventTime {
 public:
   long seconds_;
