@@ -203,12 +203,10 @@ void WCVReceiverApp::recv(NRAttrVec *data, NR::handle h)
 void WCVReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
   if (front == rear) {
-          if (subHandle_) {
-             DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
-             dr_ -> unsubscribe(subHandle_);
+          if (!subHandle_) {
+		  subHandle_ = setupSubscription();
           }
 	  set_state(RECEIVING);
-	  subHandle_ = setupSubscription();
 	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
 	  node -> giveup_sched(wcv_handler);
 	 
@@ -263,12 +261,10 @@ void WCVReceiverApp::run()
 {
   // Other states indicates WCV is still running
   if (get_state() == CHARGED) {
-          if (subHandle_) {
-             DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
-             dr_ -> unsubscribe(subHandle_);
+          if (!subHandle_) {
+		  subHandle_ = setupSubscription();
           }
 	  set_state(RECEIVING);
-	  subHandle_ = setupSubscription();
 	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
 	  if (!wcv_handler)
 		  wcv_handler = new WCVHandler(node, this, NULL, 0);
