@@ -42,6 +42,7 @@
 
 #include "wcv_sender.hh"
 #include <unistd.h>
+#include <wireless-phy.h>
 
 #ifdef NS_DIFFUSION
 static class WCVSenderAppClass : public TclClass {
@@ -148,6 +149,13 @@ handle WCVSenderApp::setupSubscription(double fake)
   //attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
   //attrs.push_back(LongitudeAttr.make(NRAttribute::IS, 54.00));
   if (fake < 0) {
+	  Phy* n;
+	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
+		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
+
+	  if (node -> energy_model() -> energy() > 0.8) {
+		  return NULL;
+	  }
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
   } else {
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
@@ -180,15 +188,25 @@ handle WCVSenderApp::setupPublication(double fake)
   attrs.push_back(LongitudeAttr.make(NRAttribute::IS, longitude));
   //attrs.push_back(TargetAttr.make(NRAttribute::IS, "F117A"));
   if (fake < 0) {
+	  Phy* n;
+	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
+		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
+
+	  if (node -> energy_model() -> energy() > 0.8) {
+		  return NULL;
+	  }
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Node %d publish energy *%x=%lf\n", node->nodeid(), node->energy_model(), node->energy_model()->energy());
   } else {
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, fake));
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Node %d publish fake energy %lf\n", node->nodeid(), fake);
   }
   attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
   struct timeval tmv;
   GetTime(&tmv);
   timeAttr_ = TimeAttr.make(NRAttribute::IS, (void *) &tmv, sizeof(tmv));
   attrs.push_back(timeAttr_);
+
 
   handle h = dr_->publish(&attrs);
 
