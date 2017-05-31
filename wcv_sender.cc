@@ -74,10 +74,10 @@ void WCVSenderApp::send()
     // Update counter
     last_seq_sent_++;
     counterAttr_->setVal(last_seq_sent_);
-  }
-
+  } else {
   // re-schedule the timer 
-  // sdt_.resched(SEND_DATA_INTERVAL);
+    sdt_.resched(SEND_DATA_INTERVAL);
+  }
 }
 
 int WCVSenderApp::command(int argc, const char*const* argv) {
