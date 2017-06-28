@@ -84,7 +84,7 @@ void OPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
   timeAttr = TimeAttr.find(data);
 
   if (!counterAttr || !timeAttr){
-    DiffPrint(DEBUG_ALWAYS, "Received a BAD packet !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Received a BAD packet !\n");
     PrintAttrs(data);
     return;
   }
@@ -100,7 +100,7 @@ void OPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
     // Time's not synchronized
     delay_seconds = -1;
     delay_useconds = 0;
-    DiffPrint(DEBUG_ALWAYS, "Error calculating delay !\n");
+    DiffPrintWithTime(DEBUG_ALWAYS, "Error calculating delay !\n");
   }
   else{
     delay_seconds = delay_seconds - probe_event->seconds_;
@@ -122,14 +122,14 @@ void OPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
     if (counterAttr->getVal() < last_seq_recv_){
       // Multiple sources detected, disabling statistics
       last_seq_recv_ = -1;
-      DiffPrint(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f!\n",
+      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f!\n",
 		((DiffusionRouting *)dr_)->getNodeId(),
 		counterAttr->getVal(), total_delay);
     }
     else{
       last_seq_recv_ = counterAttr->getVal();
       num_msg_recv_++;
-      DiffPrint(DEBUG_ALWAYS, "Node%d: Received data: %d, total latency = %f, %% messages received: %f !\n",
+      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data: %d, total latency = %f, %% messages received: %f !\n",
 		((DiffusionRouting *)dr_)->getNodeId(),
 		last_seq_recv_, total_delay,
 		(float) ((num_msg_recv_ * 100.00) /
@@ -137,7 +137,7 @@ void OPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
     }
   }
   else{
-    DiffPrint(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f !\n",
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received data %d, total latency = %f !\n",
 	      ((DiffusionRouting *)dr_)->getNodeId(),
 	      counterAttr->getVal(), total_delay);
   }
