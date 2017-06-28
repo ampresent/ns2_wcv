@@ -181,7 +181,7 @@ OPPPingReceiverApp::OPPPingReceiverApp()
 OPPPingReceiverApp::OPPPingReceiverApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
-	//global_debug_level=5;
+	global_debug_level=5;
   last_seq_recv_ = 0;
   num_msg_recv_ = 0;
   first_msg_recv_ = -1;

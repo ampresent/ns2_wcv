@@ -245,7 +245,7 @@ OPPPingSenderApp::OPPPingSenderApp() : sdt_(this)
 OPPPingSenderApp::OPPPingSenderApp(int argc, char **argv)
 #endif // NS_DIFFUSION
 {
-	//global_debug_level=5;
+	global_debug_level=5;
   last_seq_sent_ = 0;
   num_subscriptions_ = 0;
 
