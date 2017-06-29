@@ -127,6 +127,7 @@ for {set i 0} {$i < 3} {incr i} {
 	set src_($i) [new Application/DiffApp/PingSender/TPP]
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
+	$ns_ attach-diffapp $node_($i) $con_($i)
 }
 # wcv
 set wcv_ [new Application/DiffApp/PingReceiver/TPP]
