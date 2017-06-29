@@ -10,10 +10,10 @@ set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set opt(filters)        OnePhasePullFilter
 set val(ifqlen)         150                         ;# max packet in ifq
-set val(nn)             5                         ;# number of mobilenodes
 set val(rp)             Directed_Diffusion		;# routing protocol
-set val(x)		50
-set val(y)		50
+
+source ./initialize
+
 #Queue/DropTail/PriQueue set Prefer_Routing_Protocols    1
 #LL set mindelay_                50us
 #LL set delay_                   25us
@@ -112,18 +112,7 @@ for {set i 0} {$i < $val(nn) } {incr i} {
  $god_ new_node $node_($i)
 }
 # Define the nodes positions 
-$node_(0) set X_ 15.0
-$node_(0) set Y_ 20.0
-$node_(0) set Z_ 0.000000000000
-$node_(1) set X_ 25.0
-$node_(1) set Y_ 20.0
-$node_(1) set Z_ 0.000000000000
-$node_(2) set X_ 35.0
-$node_(2) set Y_ 20.0
-$node_(2) set Z_ 0.000000000000
-$node_(3) set X_ 5.0
-$node_(3) set Y_ 5.0
-$node_(3) set Z_ 0.000000000000
+source ./location
 #set null [new Agent/Null]
 #$ns_ attach-agent $node_(3) $null
 
@@ -166,18 +155,18 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 
 # Tell nodes simulation ends at 30.0
 for {set i 0} {$i < $val(nn) } {incr i} {
-   $ns_ at 200 "$node_($i) reset";
+   $ns_ at 200.000001 "$node_($i) reset";
 }
 $ns_ at 200 "stop"
-$ns_ at 200 "puts \"\nNS EXITING...\""
-$ns_ at 200 "$ns_ halt"
+$ns_ at 200.000001 "puts \"\nNS EXITING...\""
+$ns_ at 200.000001 "$ns_ halt"
 
 proc stop {} {
     global ns_ scenario1 scenario1nam
     $ns_ flush-trace
     close $scenario1
     #set hasDISPLAY 0
-    exec nam scenario1.nam &
+    #exec nam scenario1.nam &
  
 }
 puts "\nStarting Simulation..."
