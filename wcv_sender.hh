@@ -104,6 +104,8 @@ private:
 #ifdef NS_DIFFUSION
   WCVSendDataTimer sdt_;
 #endif // NS_DIFFUSION
+  double auto_fake_coefficient();
+  double getDegree(DiffusionRouting* dr, bool out);
 };
 
 class WCVSenderReceive : public NR::Callback {

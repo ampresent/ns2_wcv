@@ -42,6 +42,8 @@
 //
 
 #include "1pp_ping_sender.hh"
+#include "mobile/god.h"
+#include "wcv.h"
 #include <unistd.h>
 
 #ifdef NS_DIFFUSION
@@ -59,6 +61,12 @@ void OPPPingSendDataTimer::expire(Event *) {
 
 void OPPPingSenderApp::send()
 {
+	/*
+  God *mygod = God::instance();
+  for (int i=0;i<mygod->nodes();i++)
+    DiffPrintWithTime(DEBUG_ALWAYS, "&nodes[%d] = 0x%x\n", i, mygod->node_list()[i]);
+    */
+
   struct timeval tmv;
 
   // Send data if we have active subscriptions
@@ -89,7 +97,11 @@ int OPPPingSenderApp::command(int argc, const char*const* argv) {
       return TCL_OK;
     }
   }
-  return DiffApp::command(argc, argv);
+  int ret = DiffApp::command(argc, argv);
+  if (argc == 3 && strcmp(argv[1], "dr") == 0) {
+	  WCVNode::add2map(((DiffusionRouting*)dr_)->getNodeId(), this);
+  }
+  return ret;
 }
 #endif // NS_DIFFUSION
 

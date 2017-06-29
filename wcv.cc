@@ -77,3 +77,9 @@ void WCVNode::giveup_sched(WCVHandler* wcv_handler) {
 	s.schedule(wcv_handler, &pos_intr_, RECV_PERIOD);
 }
 
+map<int, OPPPingSenderApp*> WCVNode::node2app;
+
+void WCVNode::add2map(int node_id, OPPPingSenderApp* app) {
+	WCVNode::node2app[node_id] = app;
+}
+

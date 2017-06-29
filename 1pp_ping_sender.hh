@@ -82,6 +82,8 @@ public:
   void run();
   void recv(NRAttrVec *data, NR::handle my_handle);
 
+  DiffusionRouting* dr() { return (DiffusionRouting*)dr_; }
+
 private:
   // NR Specific variables
   OPPPingSenderReceive *mr_;

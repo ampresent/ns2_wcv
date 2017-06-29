@@ -41,6 +41,8 @@
 // which carries forward this exception.
 
 #include "wcv_sender.hh"
+#include "diffusion3/filters/diffusion/one_phase_pull.hh"
+#include "wcv.h"
 #include <unistd.h>
 #include <wireless-phy.h>
 
@@ -89,8 +91,14 @@ int WCVSenderApp::command(int argc, const char*const* argv) {
     }
   } else if (argc == 3) {
       if (strcmp(argv[1], "publish") == 0) {
-          run(atof(argv[2]));
-          return TCL_OK;
+	      if (strcmp(argv[2], "auto") == 0) {
+		  run(atof(argv[2]));
+		  return TCL_OK;
+	      } else {
+		  double coefficient = auto_fake_coefficient();
+		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  return TCL_OK;
+	      }
       }
   }
   return DiffApp::command(argc, argv);
@@ -135,7 +143,29 @@ void WCVSenderApp::recv(NRAttrVec *data, NR::handle )
     break;
 
   }
+
+  /*
+  if (nralgorithm->getVal() == INTER_ALGORITHM) { 
+
+  }
+  */
+
 }
+
+/*
+handle WCVSenderApp::setupInterSubscription() {
+  NRAttrVec attrs;
+  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+
+  if (!evil) {
+    return NULL;
+  }
+
+  attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, INTER_ALGORITHM));
+  attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
+}
+*/
 
 handle WCVSenderApp::setupSubscription(double fake)
 {
@@ -153,7 +183,8 @@ handle WCVSenderApp::setupSubscription(double fake)
 	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
 		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
 
-	  if (node -> energy_model() -> energy() > 0.8) {
+	  if (node -> energy_model() -> energy() >
+			node -> energy_model() -> initialenergy() * 0.8) {
 		  return NULL;
 	  }
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
@@ -192,7 +223,8 @@ handle WCVSenderApp::setupPublication(double fake)
 	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
 		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
 
-	  if (node -> energy_model() -> energy() > 0.8) {
+	  if (node -> energy_model() -> energy() >
+			node -> energy_model() -> initialenergy() * 0.8) {
 		  return NULL;
 	  }
 	  attrs.push_back(EnergyAttr.make(NRAttribute::IS, node->energy_model()->energy()));
@@ -217,6 +249,71 @@ handle WCVSenderApp::setupPublication(double fake)
 
 void WCVSenderApp::run() {
 	run(-1);
+}
+
+double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
+	double degree = 0.0;
+	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr_)->filterList();
+	list<FilterEntry*>::iterator fei = filterlist.begin();
+	/*
+	 * Has only One Phase Pull Filter
+	 */
+	list<RoutingEntry*> routinglist = ((OnePhasePullFilterReceive*)((*fei)->cb_))->filter_->routingList();
+	list<RoutingEntry*>::iterator rei = routinglist.begin();
+	for (;rei!=routinglist.end();rei++) {
+		/*
+		const static NRSimpleAttribute<int>* classAttr = 
+		const static NRSimpleAttribute<int>* algorithmAttr = 
+		*/
+		static NRAttrVec attrs {
+			NRClassAttr.make(NRAttribute::IS, NRAttribute::DATA_CLASS), 
+			NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+		};
+		// If wcv data packet is found ( not charging packet )
+		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
+			list<RoundIdEntry*> roundlist = (*rei)->round_ids_;
+			list<RoundIdEntry*>::iterator rdi = roundlist.begin();
+			/*
+			 * no need to find some round_id_entry 
+			 */
+			for (;rdi!=roundlist.end();rdi++ ){
+				if (out) {
+					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
+					// So degree is no more than N
+					degree += 1.0 * gl.size() / roundlist.size();
+				} else {
+					int node_id = ((DiffusionRouting*)dr_) -> getNode() -> nodeid();
+					OPPGradientEntry *ge = (*rdi)->findGradient(node_id);
+					// So degree is no more than N, either
+					if (ge) degree += 1.0 / roundlist.size();
+				}
+			}
+			break;
+		}
+	}
+
+	return degree;
+}
+
+double WCVSenderApp::auto_fake_coefficient() {
+	double O = getDegree(WCVNode::node2app[((DiffusionRouting*)dr_)->getNode()->nodeid()]->dr(), true);
+	double I = 0;
+	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
+			it!=WCVNode::node2app.end();it++){
+
+		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false);
+	}
+	// O: filter1..routing_entry_1..round_id_s..gradient_s
+	// I: node_s..filter1..routing_entry_1..round_id_s..gradient_s
+	
+	// O <= N, I <= N
+	
+	int N = WCVNode::node2app.size();
+
+	double coefficient = 2.0 * (O<I?O:I) / N;
+	coefficient = coefficient > 1 ? 1 : coefficient;
+	
+	return coefficient;
 }
 
 void WCVSenderApp::run(double fake)
