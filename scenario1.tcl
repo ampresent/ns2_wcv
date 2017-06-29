@@ -8,7 +8,7 @@ set val(mac)            Mac/802_15_4
 set val(ifq)            Queue/DropTail/PriQueue    ;# interface queue type
 set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
-set opt(filters)        GradientFilter    ;# options can be one or more of 
+set opt(filters)        OnePhasePullFilter
 set val(ifqlen)         150                         ;# max packet in ifq
 set val(nn)             5                         ;# number of mobilenodes
 set val(rp)             Directed_Diffusion		;# routing protocol
