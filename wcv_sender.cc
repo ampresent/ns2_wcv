@@ -92,11 +92,11 @@ int WCVSenderApp::command(int argc, const char*const* argv) {
   } else if (argc == 3) {
       if (strcmp(argv[1], "publish") == 0) {
 	      if (strcmp(argv[2], "auto") == 0) {
-		  run(atof(argv[2]));
-		  return TCL_OK;
-	      } else {
 		  double coefficient = auto_fake_coefficient();
 		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  return TCL_OK;
+	      } else {
+		  run(atof(argv[2]));
 		  return TCL_OK;
 	      }
       }
