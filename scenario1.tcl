@@ -119,8 +119,6 @@ $node_(3) setenergy 10
 $node_(4) setenergy 10
 # Define the nodes positions 
 source ./location
-#set null [new Agent/Null]
-#$ns_ attach-agent $node_(3) $null
 
 ## Establish traffic between nodes 
    Mac/802_15_4 wpanCmd ack4data off
@@ -140,9 +138,9 @@ for {set i 0} {$i < 3} {incr i} {
 set wcv_ [new Application/DiffApp/PingReceiver/WCV]
 set snk_ [new Application/DiffApp/PingReceiver/OPP]
 
-$node_(4) NodeLabel wcv
+$node_(3) NodeLabel wcv
 $ns_ attach-diffapp $node_(4) $wcv_
-$node_(3) NodeLabel base
+$node_(4) NodeLabel base
 $ns_ attach-diffapp $node_(3) $snk_
 #set debug_ [gets stdin]
 
