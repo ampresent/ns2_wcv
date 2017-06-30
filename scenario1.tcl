@@ -130,25 +130,21 @@ source ./location
    
 for {set i 0} {$i < 3} {incr i} {
 	# src_ is used to communicate with WCV
-	set src_($i) [new Application/DiffApp/PingSender/TPP]
+	set src_($i) [new Application/DiffApp/PingSender/WCV]
+	$ns_ attach-diffapp $node_($i) $src_($i)
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
 	$ns_ attach-diffapp $node_($i) $con_($i)
 }
 # wcv
-set wcv_ [new Application/DiffApp/PingReceiver/TPP]
+set wcv_ [new Application/DiffApp/PingReceiver/WCV]
 set snk_ [new Application/DiffApp/PingReceiver/OPP]
 
-$ns_ attach-diffapp $node_(0) $src_(0)
-$ns_ attach-diffapp $node_(1) $src_(1)
-$ns_ attach-diffapp $node_(2) $src_(2)
 $node_(4) NodeLabel wcv
 $ns_ attach-diffapp $node_(4) $wcv_
-
-$ns_ attach-diffapp $node_(0) $con_(0)
-$ns_ attach-diffapp $node_(1) $con_(1)
-$ns_ attach-diffapp $node_(2) $con_(2)
+$node_(3) NodeLabel base
 $ns_ attach-diffapp $node_(3) $snk_
+#set debug_ [gets stdin]
 
 source ./data_flow
 source ./charging_request
