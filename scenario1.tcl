@@ -104,15 +104,19 @@ $ns_ node-config -adhocRouting $val(rp) \
   #-movementTrace OFF \
                 -energyModel "EnergyModel"\
                 -initialEnergy 1\
-                -rxPower 0.3\
+                -rxPower 0.4\
                 -txPower 0.5\
+		-idlePower 0.0030\
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
  set node_($i) [$ns_ node $i] 
  $node_($i) random-motion 0  ;# disable random motion
  $god_ new_node $node_($i)
+ $node_($i) setenergy 1
 }
+$node_(3) setenergy 10
+$node_(4) setenergy 10
 # Define the nodes positions 
 source ./location
 #set null [new Agent/Null]
@@ -140,7 +144,6 @@ $ns_ attach-diffapp $node_(1) $src_(1)
 $ns_ attach-diffapp $node_(2) $src_(2)
 $node_(4) NodeLabel wcv
 $ns_ attach-diffapp $node_(4) $wcv_
-$node_(4) setenergy 10
 
 $ns_ attach-diffapp $node_(0) $con_(0)
 $ns_ attach-diffapp $node_(1) $con_(1)
