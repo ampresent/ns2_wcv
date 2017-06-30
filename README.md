@@ -1,5 +1,5 @@
 # ns2_wcv
-An Wireless Chargeable Vehicle extension for Network Simulator 2
+A WCV(Wireless Chargeable Vehicle) extension for Network Simulator 2, and a DoC (Denial of Charge) attack model research
 
 ## Overview
 
