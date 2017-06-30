@@ -48,6 +48,8 @@ NRSimpleAttributeFactory<int> AppCounterAttr(COUNTER_KEY, NRAttribute::INT32_TYP
 NRSimpleAttributeFactory<void *> TimeAttr(TIME_KEY, NRAttribute::BLOB_TYPE);
 NRSimpleAttributeFactory<double> EnergyAttr(8808, NRAttribute::FLOAT64_TYPE);
 NRSimpleAttributeFactory<int> IDAttr(8809, NRAttribute::INT32_TYPE);
+NRSimpleAttributeFactory<int> NRTypeAttr(8810, NRAttribute::INT32_TYPE);
+
 
 const double DX = 1.1, DY = 1.1, DD = sqrt(DX*DX + DY*DY), EPS = 1e-7;
 

@@ -59,13 +59,14 @@ extern NRSimpleAttributeFactory<float> LongitudeAttr;
 extern NRSimpleAttributeFactory<float> LatitudeAttr;
 extern NRSimpleAttributeFactory<double> EnergyAttr;
 extern NRSimpleAttributeFactory<int> IDAttr;
+extern NRSimpleAttributeFactory<int> NRTypeAttr;
 extern const double DX, DY, DD, EPS;
 
 #define MODULER 6
 #define MAX_SIZE (MODULER - 1)
 #define RECV_PERIOD 4
 
-#define WCV_ALGORITHM 13010
+#define WCV_TYPE 1
 
 class EventTime {
 public:
