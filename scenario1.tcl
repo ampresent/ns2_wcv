@@ -53,8 +53,9 @@ set dist(25m) 3.07645e-07
 set dist(30m) 2.13643e-07
 set dist(35m) 1.56962e-07
 set dist(40m) 1.20174e-07
-Phy/WirelessPhy set CSThresh_  ;#$dist(40m)
-Phy/WirelessPhy set RXThresh_  ;#$dist(40m)
+set dist(100m) 1.92278e-08
+Phy/WirelessPhy set CSThresh_  $dist(40m)
+Phy/WirelessPhy set RXThresh_  $dist(40m)
 #Phy/WirelessPhy set CPThresh_ 10 
 # According to the Two-Ray Ground propagation model 
 #Pr(d) = Pt*Gt*Gr*ht*ht*hr*hr/(d*d*d*d*L)
