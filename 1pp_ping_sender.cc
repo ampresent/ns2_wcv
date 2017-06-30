@@ -87,7 +87,7 @@ void OPPPingSenderApp::send()
   }
 
   // re-schedule the timer 
-  sdt_.resched(SEND_DATA_INTERVAL);
+  // sdt_.resched(SEND_DATA_INTERVAL);
 }
 
 int OPPPingSenderApp::command(int argc, const char*const* argv) {
@@ -190,14 +190,12 @@ void OPPPingSenderApp::run()
   fd_set FDS;
 #endif // INTERATIVE
 
-  /*
   if (subHandle_) {
 	  dr_ -> unsubscribe(subHandle_);
   }
   if (pubHandle_) {
 	  dr_ -> unpublish(pubHandle_);
   }
-  */
 
   // Setup publication and subscription
   subHandle_ = setupSubscription();

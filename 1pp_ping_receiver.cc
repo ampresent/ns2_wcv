@@ -162,11 +162,9 @@ handle OPPPingReceiverApp::setupSubscription()
 
 void OPPPingReceiverApp::run()
 {
-	/*
   if (subHandle_) {
 	  dr_ -> unsubscribe(subHandle_);
   }
-  */
   subHandle_ = setupSubscription();
 
 #ifndef NS_DIFFUSION
