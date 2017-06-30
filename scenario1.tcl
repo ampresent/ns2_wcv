@@ -71,6 +71,7 @@ Mac/802_15_4 wpanNam namStatus on  ;# default = off (should be turned on before 
 set ns_  [new Simulator]
 # Tell teh simulator to use teh new type trace data 
 $ns_ use-newtrace
+$ns_ set WirelessNewTrace_ ON
 set scenario1   [open scenario1.tr w]
 $ns_ trace-all $scenario1
 #Define the NAM output file
@@ -97,8 +98,8 @@ $ns_ node-config -adhocRouting $val(rp) \
   -phyType $val(netif) \
   -topoInstance $topo \
   -diffusionFilter $opt(filters) \
-  -agentTrace OFF \
-  -routerTrace OFF \
+  -agentTrace ON \
+  -routerTrace ON \
   -macTrace ON \
   #-movementTrace OFF \
                 -energyModel "EnergyModel"\
