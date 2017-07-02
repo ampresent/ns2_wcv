@@ -119,7 +119,7 @@ void DiffPrintWithTime(int msg_debug_level, const char *fmt, ...)
     GetTime(&tv);
 
     // Print Time
-    fprintf(stderr, "%ld.%06d : ", tv.tv_sec, (int) tv.tv_usec);
+    fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
     // Print message
     vfprintf(stderr, fmt, ap);
     fflush(NULL);
