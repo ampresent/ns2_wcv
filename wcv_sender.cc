@@ -63,6 +63,12 @@ void WCVSenderApp::send()
 {
   struct timeval tmv;
 
+  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+  Phy* n;
+  for(n = node->ifhead().lh_first; n; n = n->nextnode() )
+    (static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
+  node->log_energy(1);
+
   // Send data if we have active subscriptions
   if (num_subscriptions_ > 0){
     // Update time in the packet
@@ -317,15 +323,13 @@ double WCVSenderApp::auto_fake_coefficient() {
 void WCVSenderApp::run(double fake)
 {
   struct timeval tmv;
-#ifndef NS_DIFFUSION
   int retval;
-#endif // !NS_DIFFUSION
 
 #ifdef INTERACTIVE
   char input;
   fd_set FDS;
 #endif // INTERATIVE
-
+  
   // Setup publication and subscription
   if (subHandle_) {
           DiffPrintWithTime(DEBUG_ALWAYS, "Sender unsubscribe %u\n", subHandle_);
@@ -355,74 +359,14 @@ void WCVSenderApp::run(double fake)
   counterAttr_ = AppCounterAttr.make(NRAttribute::IS, last_seq_sent_);
   data_attr_.push_back(counterAttr_);
 
-//  double latitude, longitude, z;
-//
-//  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
-//  node->getLoc(&longitude, &latitude, &z);
-//
-//  latitudeAttr_ = LatitudeAttr.make(NRAttribute::IS, latitude);
-//  longitudeAttr_ = LongitudeAttr.make(NRAttribute::IS, longitude);
-
-#ifndef NS_DIFFUSION
-  // Main thread will send ping probes
-  while(1){
-#ifdef INTERACTIVE
-    FD_SET(0, &FDS);
-    fprintf(stdout, "Press <Enter> to send a ping probe...");
-    fflush(NULL);
-    select(1, &FDS, NULL, NULL, NULL);
-    input = getc(stdin);
-#else
-    sleep(SEND_DATA_INTERVAL);
-#endif // INTERACTIVE
-
-    // Send data packet if we have active subscriptions
-    if (num_subscriptions_ > 0){
-      // Update time in the packet
-      GetTime(&tmv);
-      lastEventTime_->seconds_ = tmv.tv_sec;
-      lastEventTime_->useconds_ = tmv.tv_usec;
-
-      // Send data probe
-      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
-      retval = dr_->send(pubHandle_, &data_attr_);
-
-      // Update counter
-      last_seq_sent_++;
-      counterAttr_->setVal(last_seq_sent_);
-    }
-  }
-#else
   send();
-#endif // !NS_DIFFUSION
 }
 
-#ifdef NS_DIFFUSION
 WCVSenderApp::WCVSenderApp() : sdt_(this)
-#else
-WCVSenderApp::WCVSenderApp(int argc, char **argv)
-#endif // NS_DIFFUSION
 {
-	global_debug_level=5;
+  global_debug_level=5;
   last_seq_sent_ = 0;
   num_subscriptions_ = 0;
-
   mr_ = new WCVSenderReceive(this);
-
-#ifndef NS_DIFFUSION
-  parseCommandLine(argc, argv);
-  dr_ = NR::createNR(diffusion_port_);
-#endif // NS_DIFFUSION
 }
 
-#ifndef NS_DIFFUSION
-int main(int argc, char **argv)
-{
-  WCVSenderApp *app;
-
-  app = new WCVSenderApp(argc, argv);
-  app->run();
-
-  return 0;
-}
-#endif // NS_DIFFUSION
