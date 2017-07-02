@@ -59,12 +59,11 @@ void GetTime(struct timeval *tv)
   long sec, usec;
 
   time = Scheduler::instance().clock();
-  // sec = lrint (time);
-  sec = (long) floor (time);
-  // usec = lrint ((time - sec) * 1000000);
-  usec = (long) floor ((time - sec) * 1000000);
-  tv->tv_sec = sec;
-  tv->tv_usec = usec;
+  //tv->tv_sec = (long) floor (time);
+  //tv->tv_usec = (long) ((time - tv->tv_sec) * 1000000);
+  long time2 = (long) (time * 1000000);
+  tv->tv_sec = time2 / 1000000;
+  tv->tv_usec = time2 % 1000000;
   DiffPrint(DEBUG_ALWAYS, "time = %lf, tv->sec = %ld, tv->usec = %ld\n", time, tv->tv_sec, tv->tv_usec);
 #else
   gettimeofday(tv, NULL);
