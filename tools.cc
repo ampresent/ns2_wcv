@@ -60,9 +60,9 @@ void GetTime(struct timeval *tv)
 
   time = Scheduler::instance().clock();
   // sec = lrint (time);
-  sec = (long) rint (time);
+  sec = (long) floor (time);
   // usec = lrint ((time - sec) * 1000000);
-  usec = (long) rint ((time - sec) * 1000000);
+  usec = (long) floor ((time - sec) * 1000000);
   tv->tv_sec = sec;
   tv->tv_usec = usec;
   DiffPrint(DEBUG_ALWAYS, "time = %lf, tv->sec = %ld, tv->usec = %ld\n", time, tv->tv_sec, tv->tv_usec);
