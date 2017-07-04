@@ -83,6 +83,7 @@ public:
   void recv(NRAttrVec *data, NR::handle my_handle);
 
   DiffusionRouting* dr() { return (DiffusionRouting*)dr_; }
+  bool malicious;
 
 private:
   // NR Specific variables

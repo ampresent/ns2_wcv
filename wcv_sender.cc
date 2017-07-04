@@ -92,11 +92,17 @@ void WCVSenderApp::send()
 int WCVSenderApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "publish") == 0) {
+benign:
       run();
       return TCL_OK;
     }
   } else if (argc == 3) {
       if (strcmp(argv[1], "publish") == 0) {
+		static map<int, OPPPingSenderApp*>::iterator it;
+	      it = WCVNode::node2app.find(((DiffusionRouting*)dr_)->getNodeId());
+	      if (it == WCVNode::node2app.end() || !it->second->malicious) {
+		      goto benign;
+	      }
 	      if (strcmp(argv[2], "auto") == 0) {
 		  double coefficient = auto_fake_coefficient();
 		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());

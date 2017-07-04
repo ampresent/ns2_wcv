@@ -95,10 +95,13 @@ int OPPPingSenderApp::command(int argc, const char*const* argv) {
     if (strcmp(argv[1], "publish") == 0) {
       run();
       return TCL_OK;
+    } else if (strcmp(argv[1], "malicious") == 0) {
+      malicious = true;
+      return TCL_OK;
     }
   }
   int ret = DiffApp::command(argc, argv);
-  if (argc == 3 && strcmp(argv[1], "dr") == 0) {
+  if (argc == 3 && strcmp(argv[1], "dr") == 0 && malicious) {
 	  WCVNode::add2map(((DiffusionRouting*)dr_)->getNodeId(), this);
   }
   return ret;
@@ -262,6 +265,7 @@ OPPPingSenderApp::OPPPingSenderApp(int argc, char **argv)
 	global_debug_level=5;
   last_seq_sent_ = 0;
   num_subscriptions_ = 0;
+  malicious = false;
 
   mr_ = new OPPPingSenderReceive(this);
 

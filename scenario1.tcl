@@ -105,7 +105,7 @@ $ns_ node-config -adhocRouting $val(rp) \
   -initialEnergy 1\
   -rxPower 0.4\
   -txPower 0.5\
-  -idlePower 0.0030\
+  -idlePower 0.0003\
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
@@ -130,22 +130,36 @@ source ./location
 #src dest interval start stop packetsize stage 
 #the first sensor activity
    
-for {set i 0} {$i < 3} {incr i} {
+for {set i 0} {$i < $val(nn)} {incr i} {
+	if { $i == $wcv || $i == $base } {
+		continue
+	}
 	# src_ is used to communicate with WCV
 	set src_($i) [new Application/DiffApp/PingSender/WCV]
 	$ns_ attach-diffapp $node_($i) $src_($i)
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
-	$ns_ attach-diffapp $node_($i) $con_($i)
 }
+
+foreach i $malicious {
+  $con_($i) malicious 
+}
+
+
+for {set i 0} {$i < $val(nn)} {incr i} {
+	if { $i != $wcv && $i != $base } {
+		$ns_ attach-diffapp $node_($i) $con_($i)
+	}
+}
+
 # wcv
 set wcv_ [new Application/DiffApp/PingReceiver/WCV]
 set snk_ [new Application/DiffApp/PingReceiver/OPP]
 
-$node_(3) NodeLabel wcv
-$ns_ attach-diffapp $node_(4) $wcv_
-$node_(4) NodeLabel base
-$ns_ attach-diffapp $node_(3) $snk_
+$node_($wcv) NodeLabel wcv
+$ns_ attach-diffapp $node_($wcv) $wcv_
+$node_($base) NodeLabel base
+$ns_ attach-diffapp $node_($base) $snk_
 #set debug_ [gets stdin]
 
 source ./data_flow
@@ -159,11 +173,11 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 
 # Tell nodes simulation ends at 30.0
 for {set i 0} {$i < $val(nn) } {incr i} {
-   $ns_ at 200.000001 "$node_($i) reset";
+   $ns_ at [expr $val(stop)+0.000001] "$node_($i) reset";
 }
-$ns_ at 200 "stop"
-$ns_ at 200.000001 "puts \"\nNS EXITING...\""
-$ns_ at 200.000001 "$ns_ halt"
+$ns_ at $val(stop) "stop"
+$ns_ at [expr $val(stop)+0.000001] "puts \"\nNS EXITING...\""
+$ns_ at [expr $val(stop)+0.000001] "$ns_ halt"
 
 proc stop {} {
     global ns_ scenario1 scenario1nam
