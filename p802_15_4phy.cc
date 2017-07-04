@@ -480,7 +480,7 @@ UINT_8 Phy802_15_4::measureLinkQ(Packet *p)
 {
 	//Link quality measurement is somewhat simulation/implementation specific;
 	//here's our way:
-	int lq,lq2;
+	long long lq,lq2;
 
 	//consider energy
 	/* Linux floating number compatibility
@@ -489,7 +489,7 @@ UINT_8 Phy802_15_4::measureLinkQ(Packet *p)
 	{
 	double tmpf;
 	tmpf = p->txinfo_.RxPr/RXThresh_;
-	lq = (int)(tmpf * 128);
+	lq = (long long)(tmpf * 128);
 	}
 	if (lq > 255) lq = 255;
 
@@ -500,7 +500,7 @@ UINT_8 Phy802_15_4::measureLinkQ(Packet *p)
 	{
 	double tmpf;
 	tmpf = p->txinfo_.RxPr/HDR_LRWPAN(p)->rxTotPower;
-	lq2 = (int)(tmpf * 255);
+	lq2 = (long long)(tmpf * 255);
 	}
 	
 	if (lq > lq2) lq = lq2;		//use worst value
@@ -706,7 +706,7 @@ void Phy802_15_4::CCAReportHandler(void) // 2.31 change: New timer added to repo
 
 void Phy802_15_4::EDHandler(void)
 {
-	int energy;
+	long long energy;
 	UINT_8 t_EnergyLevel;
 
 	//refer to sec 6.7.7 for ED implementation details
@@ -718,7 +718,7 @@ void Phy802_15_4::EDHandler(void)
 	{
 	double tmpf;
 	tmpf = rxEDPeakPower/RXThresh_;
-	energy = (int)(tmpf * 128);
+	energy = (long long)(tmpf * 128);
 	}
 	t_EnergyLevel = (energy > 255)?255:energy;
 	mac->PLME_ED_confirm(p_SUCCESS,t_EnergyLevel);
