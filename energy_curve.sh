@@ -9,7 +9,7 @@ set title "Energy Curve"
 EOF
 
 
-for i in `seq 0 $1`; do 
+for i in $@; do 
 	points="/tmp/points_$i"
 	echo > $points
 	ag '\-n '$i' \-e' scenario1.tr | awk '{print $3,$7}' >> $points
@@ -26,7 +26,7 @@ for i in `seq 0 $1`; do
 	#echo 'plot - title "Node: $1" with lines' >> $script
 done
 echo -n 'plot ' >> $script
-for i in `seq 0 $1`; do 
+for i in $@; do 
 	echo -n "'/tmp/points_$i' title 'Node: $i' with lines," >> $script
 done
 
