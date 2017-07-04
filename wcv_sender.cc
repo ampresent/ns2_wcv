@@ -295,7 +295,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbo
 						neighbors.insert((*it) -> node_id_);
 					}
 				} else {
-					int node_id = ((DiffusionRouting*)dr_) -> getNode() -> nodeid();
+					int node_id = ((DiffusionRouting*)dr_) -> getNodeId();
 
 					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
 					// So degree is no more than N, either
