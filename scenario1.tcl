@@ -108,15 +108,15 @@ $ns_ node-config -adhocRouting $val(rp) \
   -idlePower 0.0030\
   -channel $chan_1_ 
 
-$ns_ node-config -initialEnergy 10
-set node_($wcv) [$ns_ node $wcv] 
-$ns_ node-config -initialEnergy 100
-set node_($base) [$ns_ node $base] 
-$ns_ node-config -initialEnergy 1
 for {set i 0} {$i < $val(nn) } {incr i} {
- if {$i != $wcv && $i != $base} {
-   set node_($i) [$ns_ node $i] 
+ if {$i == $wcv} {
+   $ns_ node-config -initialEnergy 10
+ } elseif { $i == $base } {
+   $ns_ node-config -initialEnergy 100
+ } else {
+   $ns_ node-config -initialEnergy 1
  }
+ set node_($i) [$ns_ node $i] 
  $node_($i) random-motion 0  ;# disable random motion
  $god_ new_node $node_($i)
 }
