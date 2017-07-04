@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-#ag 'src_('$1')' charging_request | awk '{print $3; i=index($4,"(")+1; j=index($4,")"); print(substr($4, i, j-i))}'
 script=`mktemp`
 
 cat >> $script << EOF
@@ -21,7 +20,7 @@ for i in `seq 0 $1`; do
 	awk 'NR==FNR{req[$1]=$2} NR>FNR{print $1,",",req[$1]}' $points $request > $request_full
 
 	cat $request_full | while read line; do
-		echo "set object circle at $line size 1" >> $script
+		echo "set object circle at $line size 0.5" >> $script
 	done
 
 	#echo 'plot - title "Node: $1" with lines' >> $script
