@@ -101,22 +101,26 @@ $ns_ node-config -adhocRouting $val(rp) \
   -agentTrace ON \
   -routerTrace ON \
   -macTrace ON \
-  #-movementTrace OFF \
-                -energyModel "EnergyModel"\
-                -initialEnergy 1\
-                -rxPower 0.4\
-                -txPower 0.5\
-		-idlePower 0.0030\
+  -energyModel "EnergyModel"\
+  -initialEnergy 1\
+  -rxPower 0.4\
+  -txPower 0.5\
+  -idlePower 0.0030\
   -channel $chan_1_ 
 
+$ns_ node-config -initialEnergy 10
+set node_($wcv) [$ns_ node $wcv] 
+$ns_ node-config -initialEnergy 100
+set node_($base) [$ns_ node $base] 
+$ns_ node-config -initialEnergy 1
 for {set i 0} {$i < $val(nn) } {incr i} {
- set node_($i) [$ns_ node $i] 
+ if {$i != $wcv && $i != $base} {
+   set node_($i) [$ns_ node $i] 
+ }
  $node_($i) random-motion 0  ;# disable random motion
  $god_ new_node $node_($i)
- $node_($i) setenergy 1
 }
-$node_(3) setenergy 10
-$node_(4) setenergy 10
+
 # Define the nodes positions 
 source ./location
 
