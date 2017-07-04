@@ -257,7 +257,7 @@ void WCVSenderApp::run() {
 
 double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 	double degree = 0.0;
-	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr_)->filterList();
+	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr)->filterList();
 	list<FilterEntry*>::iterator fei = filterlist.begin();
 	/*
 	 * Has only One Phase Pull Filter
@@ -270,7 +270,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 		const static NRSimpleAttribute<int>* algorithmAttr = 
 		*/
 		static NRAttrVec attrs {
-			NRClassAttr.make(NRAttribute::IS, NRAttribute::DATA_CLASS), 
+			NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
 			NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
 		};
 		// If wcv data packet is found ( not charging packet )
@@ -300,7 +300,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
-	double O = getDegree(WCVNode::node2app[((DiffusionRouting*)dr_)->getNode()->nodeid()]->dr(), true);
+	double O = getDegree((DiffusionRouting*)dr_, true);
 	double I = 0;
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
 			it!=WCVNode::node2app.end();it++){
