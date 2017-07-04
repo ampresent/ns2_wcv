@@ -139,7 +139,7 @@ void WCVSenderApp::recv(NRAttrVec *data, NR::handle )
 
   case NRAttribute::INTEREST_CLASS:
 
-    DiffPrintWithTime(DEBUG_ALWAYS, "Received an Interest message ! With algorithm: %d\n", nralgorithm->getVal());
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Received Interest message ! With algorithm: %d\n",((DiffusionRouting*)dr_)->getNodeId() ,nralgorithm->getVal());
     num_subscriptions_++;
     break;
 
@@ -261,7 +261,7 @@ void WCVSenderApp::run() {
 	run(-1);
 }
 
-double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
+double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors) {
 	double degree = 0.0;
 	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr)->filterList();
 	list<FilterEntry*>::iterator fei = filterlist.begin();
@@ -291,11 +291,21 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
 					// So degree is no more than N
 					degree += 1.0 * gl.size() / roundlist.size();
+					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
+						neighbors.insert((*it) -> node_id_);
+					}
 				} else {
 					int node_id = ((DiffusionRouting*)dr_) -> getNode() -> nodeid();
-					OPPGradientEntry *ge = (*rdi)->findGradient(node_id);
+
+					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
 					// So degree is no more than N, either
-					if (ge) degree += 1.0 / roundlist.size();
+					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
+						OPPGradientEntry* ge = *it;
+						if (ge->node_id_ == node_id) {
+							degree += 1.0 / roundlist.size();
+							neighbors.insert(ge->node_id_);
+						}
+					}
 				}
 			}
 			break;
@@ -306,19 +316,20 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
-	double O = getDegree((DiffusionRouting*)dr_, true);
+	set<int> neighbors;
+	double O = getDegree((DiffusionRouting*)dr_, true, neighbors);
 	double I = 0;
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
 			it!=WCVNode::node2app.end();it++){
 
-		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false);
+		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false, neighbors);
 	}
 	// O: filter1..routing_entry_1..round_id_s..gradient_s
 	// I: node_s..filter1..routing_entry_1..round_id_s..gradient_s
 	
 	// O <= N, I <= N
 	
-	int N = WCVNode::node2app.size();
+	int N = neighbors.size();
 
 	double coefficient = 2.0 * (O<I?O:I) / N;
 	coefficient = coefficient > 1 ? 1 : coefficient;

@@ -48,6 +48,8 @@
 #endif // HAVE_CONFIG_H
 
 #include "ping.hh"
+#include <set>
+using std::set;
 
 class WCVSenderReceive;
 class WCVSenderApp;
@@ -105,7 +107,7 @@ private:
   WCVSendDataTimer sdt_;
 #endif // NS_DIFFUSION
   double auto_fake_coefficient();
-  double getDegree(DiffusionRouting* dr, bool out);
+  double getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors);
 };
 
 class WCVSenderReceive : public NR::Callback {
