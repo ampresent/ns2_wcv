@@ -97,12 +97,13 @@ int WCVSenderApp::command(int argc, const char*const* argv) {
     }
   } else if (argc == 3) {
       if (strcmp(argv[1], "publish") == 0) {
+	  run(atof(argv[2]));
+	  return TCL_OK;
+      }
+  } else if (argc == 4) {
+      if (strcmp(argv[1], "publish") == 0) {
 	      if (strcmp(argv[2], "auto") == 0) {
-		  double coefficient = auto_fake_coefficient();
-		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
-		  return TCL_OK;
-	      } else {
-		  run(atof(argv[2]));
+		  run(auto_fake_energy(atof(argv[3])));
 		  return TCL_OK;
 	      }
       }
@@ -299,7 +300,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out) {
 	return degree;
 }
 
-double WCVSenderApp::auto_fake_coefficient() {
+double WCVSenderApp::auto_fake_energy(double base) {
 	double O = getDegree((DiffusionRouting*)dr_, true);
 	double I = 0;
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
@@ -317,7 +318,8 @@ double WCVSenderApp::auto_fake_coefficient() {
 	double coefficient = 2.0 * (O<I?O:I) / N;
 	coefficient = coefficient > 1 ? 1 : coefficient;
 	
-	return coefficient;
+	//return coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy();
+	return coefficient * base;
 }
 
 void WCVSenderApp::run(double fake)

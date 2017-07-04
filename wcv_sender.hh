@@ -104,7 +104,7 @@ private:
 #ifdef NS_DIFFUSION
   WCVSendDataTimer sdt_;
 #endif // NS_DIFFUSION
-  double auto_fake_coefficient();
+  double auto_fake_energy(double base);
   double getDegree(DiffusionRouting* dr, bool out);
 };
 
