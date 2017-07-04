@@ -46,6 +46,8 @@ void WCVHandler::handle(Event* e) {
 		app -> schedule();
 		break;
 	default:
+		fprintf(stderr, "Exit unexpectedly!!!\n");
+		fflush(stderr);
 		exit(1);
 	}
 }
@@ -58,13 +60,16 @@ int WCVNode::set_destination(double x, double y, double speed, WCVHandler* wcv_h
 		return -1;
 	}
 	int ret = MobileNode::set_destination(x, y, speed);
+	if (ret) {
+		return ret;
+	}
 	struct timeval tv;
 	GetTime(&tv);
 	fprintf(stderr, "%ld.%06ld : ", tv.tv_sec, (long int) tv.tv_usec);
 	Scheduler& s = Scheduler::instance();
 	fprintf(stderr, "uid: %d\n", pos_intr_.uid_);
 	s.schedule(wcv_handler, &pos_intr_, sqrt((destX_-X_)*(destX_-X_)+(destY_-Y_)*(destY_-Y_))/speed_);
-	return ret;
+	return 0;
 }
 
 void WCVNode::recv(WCVHandler* wcv_handler) {
