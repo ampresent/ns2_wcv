@@ -19,17 +19,17 @@ EOF
 # | tr "\n" "," | sed "s/,$//g"`}
 
 cat > location << EOF
-\$node_(0) set X_ 0.0
-\$node_(0) set Y_ 10.0
+\$node_(0) set X_ 20.0
+\$node_(0) set Y_ -10.0
 \$node_(0) set Z_ 0.000000000000
-\$node_(1) set X_ 10.0
+\$node_(1) set X_ 20.0
 \$node_(1) set Y_ 10.0
 \$node_(1) set Z_ 0.000000000000
-\$node_(2) set X_ 5.0
+\$node_(2) set X_ 10.0
 \$node_(2) set Y_ 0.0
 \$node_(2) set Z_ 0.000000000000
-\$node_(3) set X_ 20.0
-\$node_(3) set Y_ 20.0
+\$node_(3) set X_ 30.0
+\$node_(3) set Y_ 0.0
 \$node_(3) set Z_ 0.000000000000
 \$node_(4) set X_ 0.0
 \$node_(4) set Y_ 0.0
