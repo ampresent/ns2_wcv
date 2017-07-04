@@ -303,7 +303,8 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbo
 						OPPGradientEntry* ge = *it;
 						if (ge->node_id_ == node_id) {
 							degree += 1.0 / roundlist.size();
-							neighbors.insert(ge->node_id_);
+							neighbors.insert(dr->getNodeId());
+							break;
 						}
 					}
 				}
