@@ -261,7 +261,7 @@ void WCVSenderApp::run() {
 	run(-1);
 }
 
-double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors) {
+double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visibles) {
 	double degree = 0.0;
 	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr)->filterList();
 	list<FilterEntry*>::iterator fei = filterlist.begin();
@@ -292,7 +292,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbo
 					// So degree is no more than N
 					degree += 1.0 * gl.size() / roundlist.size();
 					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
-						neighbors.insert((*it) -> node_id_);
+						visibles.insert((*it) -> node_id_);
 					}
 				} else {
 					int node_id = ((DiffusionRouting*)dr_) -> getNodeId();
@@ -301,9 +301,9 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbo
 					// So degree is no more than N, either
 					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
 						OPPGradientEntry* ge = *it;
+						visibles.insert(dr->getNodeId());
 						if (ge->node_id_ == node_id) {
 							degree += 1.0 / roundlist.size();
-							neighbors.insert(dr->getNodeId());
 							break;
 						}
 					}
@@ -317,20 +317,21 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& neighbo
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
-	set<int> neighbors;
-	double O = getDegree((DiffusionRouting*)dr_, true, neighbors);
+	set<int> visibles;
+	double O = getDegree((DiffusionRouting*)dr_, true, visibles);
 	double I = 0;
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
 			it!=WCVNode::node2app.end();it++){
 
-		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false, neighbors);
+		visibles.insert(it -> first);
+		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false, visibles);
 	}
 	// O: filter1..routing_entry_1..round_id_s..gradient_s
 	// I: node_s..filter1..routing_entry_1..round_id_s..gradient_s
 	
 	// O <= N, I <= N
 	
-	int N = neighbors.size();
+	int N = visibles.size();
 
 	double coefficient = 2.0 * (O<I?O:I) / N;
 	coefficient = coefficient > 1 ? 1 : coefficient;
