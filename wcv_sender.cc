@@ -107,6 +107,11 @@ benign:
 		  double coefficient = auto_fake_coefficient();
 		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
 		  return TCL_OK;
+	      } else if (strcmp(argv[2], "accurate") == 0){
+		      auto_accurate_fake_coefficient();
+		  double coefficient = auto_fake_coefficient();
+		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  return TCL_OK;
 	      } else {
 		  run(atof(argv[2]));
 		  return TCL_OK;
@@ -314,6 +319,37 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 	}
 
 	return degree;
+}
+
+int getFlow(DiffusionRouting* dr) {
+	int flow = 0;
+	list<FilterEntry*> filterlist = ((DiffusionRouting*)dr)->filterList();
+	list<FilterEntry*>::iterator fei = filterlist.begin();
+	/*
+	 * Has only One Phase Pull Filter
+	 */
+	list<RoutingEntry*> routinglist = ((OnePhasePullFilterReceive*)((*fei)->cb_))->filter_->routingList();
+	list<RoutingEntry*>::iterator rei = routinglist.begin();
+	for (;rei!=routinglist.end();rei++) {
+		/*
+		const static NRSimpleAttribute<int>* classAttr = 
+		const static NRSimpleAttribute<int>* algorithmAttr = 
+		*/
+		static NRAttrVec attrs {
+			NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
+			NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+		};
+		// If wcv data packet is found ( not charging packet )
+		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
+			flow += (*rei) -> count;
+		}
+	}
+	return flow;
+}
+
+double WCVSenderApp::auto_accurate_fake_coefficient() {
+	int O = getFlow((DiffusionRouting*)dr_);
+	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
