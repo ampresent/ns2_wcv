@@ -107,6 +107,11 @@ benign:
 		  double coefficient = auto_fake_coefficient();
 		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
 		  return TCL_OK;
+	      } else if (strcmp(argv[2], "accurate") == 0){
+		      auto_accurate_fake_coefficient();
+		  double coefficient = auto_fake_coefficient();
+		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  return TCL_OK;
 	      } else {
 		  run(atof(argv[2]));
 		  return TCL_OK;

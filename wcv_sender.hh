@@ -108,6 +108,7 @@ private:
 #endif // NS_DIFFUSION
   double auto_fake_coefficient();
   double getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors);
+  double auto_accurate_fake_coefficient();
 };
 
 class WCVSenderReceive : public NR::Callback {
