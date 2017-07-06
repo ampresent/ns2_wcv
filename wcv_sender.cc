@@ -283,6 +283,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 		static NRAttrVec attrs {
 			NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
 			NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+			NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
 		};
 		// If wcv data packet is found ( not charging packet )
 		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
@@ -338,6 +339,7 @@ int getFlow(DiffusionRouting* dr) {
 		static NRAttrVec attrs {
 			NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
 			NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+			NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
 		};
 		// If wcv data packet is found ( not charging packet )
 		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
