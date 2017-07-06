@@ -15,7 +15,7 @@ for i in $@; do
 	ag '\-n '$i' \-e' scenario1.tr | awk '{print $3,$7}' >> $points
 	echo 'e' >> $points
 	request=`mktemp`
-	grep 'Node'$i': Sending Data' log | awk '{print $1}' > $request
+	grep 'Node'$i': Sending WCV Data' log | awk '{print $1}' > $request
 	request_full=`mktemp`
 	awk 'NR==FNR{req[$1]=$2} NR>FNR{print $1,",",req[$1]}' $points $request > $request_full
 

@@ -77,7 +77,7 @@ void WCVSenderApp::send()
     lastEventTime_->useconds_ = tmv.tv_usec;
 
     // Send data probe
-    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending WCV Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
     dr_->send(pubHandle_, &data_attr_);
 
     // Update counter
