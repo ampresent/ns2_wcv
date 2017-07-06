@@ -165,6 +165,7 @@ class RoutingEntry {
 public:
   RoutingEntry() {
     GetTime(&tv_);
+    count = 0;
   };
 
   ~RoutingEntry() {
@@ -212,6 +213,7 @@ public:
   RoundIdList round_ids_;
   SubscriptionList subscription_list_;
   DataNeighborList data_neighbors_;
+  int count;
 };
 
 typedef list<RoutingEntry *> RoutingTable;
