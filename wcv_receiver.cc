@@ -202,39 +202,38 @@ void WCVReceiverApp::recv(NRAttrVec *data, NR::handle h)
 
 void WCVReceiverApp::schedule(){
   assert(wcv_state == SCHEDULING);
-  if (front == rear) {
-          if (subHandle_) {
-             DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
-             dr_ -> unsubscribe(subHandle_);
-          }
-	  set_state(RECEIVING);
-	  subHandle_ = setupSubscription();
-	  WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-	  node -> giveup_sched(wcv_handler);
-	 
-	  //set_state(CHARGED);
-	  return;
-  }
-  set_state(IDLE);
-  struct request popout = req_queue[front];
-  for (int i=front;i!=rear;i=(i+1)%MODULER) {
-	  fprintf(stderr, "req_queue[%d] = {%lf, %lf, %lf}\n", i, req_queue[i].lon, req_queue[i].lat, req_queue[i].energy);
-	  fflush(stderr);
-  }
   WCVNode* node = static_cast<WCVNode*>(((DiffusionRouting *)dr_)->getNode());
-  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+  MobileNode* sender = NULL;
+  struct request popout;
 
-  if (wcv_handler)
-	  delete wcv_handler;
-  MobileNode* sender = (MobileNode*)Node::get_node_by_address(popout.handle);
-  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
-  if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
-    DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, wait for retry\n");
-    set_state(SCHEDULING);
-    return;
+  while (front != rear) {
+	  popout = req_queue[front];
+	  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+
+          set_state(IDLE);
+	  if (wcv_handler)
+		  delete wcv_handler;
+	  sender = (MobileNode*)Node::get_node_by_address(popout.handle);
+	  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
+	  if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
+	    DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, drop and wait for retry\n");
+	    // Drop this request
+	    front = (front + 1) % MODULER;
+	  } else {
+	    set_state(MOVING);
+	    return;
+	  }
   }
-  set_state(MOVING);
-  //front = (front + 1) % MODULER;
+
+  // If no valid request, then resched
+  
+  if (subHandle_) {
+     DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
+     dr_ -> unsubscribe(subHandle_);
+  }
+  set_state(RECEIVING);
+  subHandle_ = setupSubscription();
+  node -> giveup_sched(wcv_handler);
 }
 
 void WCVReceiverApp::ack() {
