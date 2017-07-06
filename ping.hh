@@ -67,6 +67,7 @@ extern const double DX, DY, DD, EPS;
 #define RECV_PERIOD 4
 
 #define WCV_TYPE 1
+#define SENSOR_TYPE 2
 
 class EventTime {
 public:

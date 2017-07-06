@@ -152,7 +152,7 @@ handle OPPPingSenderApp::setupSubscription()
 
   attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
   attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM));
-  attrs.push_back(NRTypeAttr.make(NRAttribute::NE, WCV_TYPE));
+  attrs.push_back(NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE));
   attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
   attrs.push_back(TargetAttr.make(NRAttribute::EQ, "F117A"));
   attrs.push_back(LatitudeAttr.make(NRAttribute::IS, 60.00));
