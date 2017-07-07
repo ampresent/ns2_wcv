@@ -350,7 +350,8 @@ int getFlow(DiffusionRouting* dr) {
 }
 
 double WCVSenderApp::auto_accurate_fake_coefficient() {
-	int O = getFlow((DiffusionRouting*)dr_);
+	//int O = getFlow((DiffusionRouting*)dr_);
+	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
 }
 
