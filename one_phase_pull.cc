@@ -760,6 +760,15 @@ void OnePhasePullFilter::forwardData(Message *msg,
 	    DiffPrintWithTime(DEBUG_ALWAYS, "Node %d: Forwarding to library. (Add sink)\n", ((DiffusionRouting*)(dr_))->getNodeId());
 	    forwarding_history->forwardingToLibrary(sink_entry->port_);
 
+	    routing_entry -> count ++;
+	    static NRAttrVec attrs {
+	    	NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
+	    	NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+	    	NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
+	    };
+	    if (OneWayPerfectMatch(&attrs, routing_entry->attrs_)) {
+	        WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
+	    }
 	    ((DiffusionRouting *)dr_)->sendMessage(sink_message, filter_handle_);
 	  }
 	}
@@ -846,6 +855,15 @@ void OnePhasePullFilter::forwardData(Message *msg,
     DiffPrintWithTime(DEBUG_ALWAYS, "Forwarding data from %d to node %d !\n",
 	      msg->last_hop_, out_neighbor);
 
+    routing_entry -> count ++;
+    static NRAttrVec attrs {
+	NRClassAttr.make(NRAttribute::IS, NRAttribute::INTEREST_CLASS), 
+	NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM),
+	NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
+    };
+    if (OneWayPerfectMatch(&attrs, routing_entry->attrs_)) {
+	WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
+    }
     ((DiffusionRouting *)dr_)->sendMessage(out_message, filter_handle_);
 
     // Delete message
