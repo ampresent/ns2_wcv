@@ -33,6 +33,7 @@ class WCVNode : public MobileNode {
 	// Remember WCVNode is just an agent, can't have any member varible
 	public:
 		static map<int, OPPPingSenderApp*> node2app;
+		static map<int, int> statistics;
 		int set_destination(double x, double y, double s, WCVHandler* wcv_handler);
 		void recv(WCVHandler* wcv_handler);
 		void giveup_sched(WCVHandler* wcv_handler);
