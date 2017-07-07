@@ -275,6 +275,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 	 */
 	list<RoutingEntry*> routinglist = ((OnePhasePullFilterReceive*)((*fei)->cb_))->filter_->routingList();
 	list<RoutingEntry*>::iterator rei = routinglist.begin();
+	bool sole_routing_flag = false;
 	for (;rei!=routinglist.end();rei++) {
 		/*
 		const static NRSimpleAttribute<int>* classAttr = 
@@ -287,6 +288,8 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 		};
 		// If wcv data packet is found ( not charging packet )
 		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
+			assert(sole_routing_flag == false);
+			sole_routing_flag = true;
 			list<RoundIdEntry*> roundlist = (*rei)->round_ids_;
 			list<RoundIdEntry*>::iterator rdi = roundlist.begin();
 			/*
@@ -331,6 +334,7 @@ int getFlow(DiffusionRouting* dr) {
 	 */
 	list<RoutingEntry*> routinglist = ((OnePhasePullFilterReceive*)((*fei)->cb_))->filter_->routingList();
 	list<RoutingEntry*>::iterator rei = routinglist.begin();
+	bool sole_routing_flag = false;
 	for (;rei!=routinglist.end();rei++) {
 		/*
 		const static NRSimpleAttribute<int>* classAttr = 
@@ -343,6 +347,8 @@ int getFlow(DiffusionRouting* dr) {
 		};
 		// If wcv data packet is found ( not charging packet )
 		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
+			assert(sole_routing_flag == false);
+			sole_routing_flag = true;
 			flow += (*rei) -> count;
 		}
 	}
