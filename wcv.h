@@ -34,6 +34,7 @@ class WCVNode : public MobileNode {
 	public:
 		static map<int, OPPPingSenderApp*> node2app;
 		static map<int, int> statistics;
+		static map<int, int> selfsent;
 		int set_destination(double x, double y, double s, WCVHandler* wcv_handler);
 		void recv(WCVHandler* wcv_handler);
 		void giveup_sched(WCVHandler* wcv_handler);

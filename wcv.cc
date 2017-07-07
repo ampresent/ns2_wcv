@@ -84,6 +84,7 @@ void WCVNode::giveup_sched(WCVHandler* wcv_handler) {
 
 map<int, OPPPingSenderApp*> WCVNode::node2app;
 map<int, int> WCVNode::statistics;
+map<int, int> WCVNode::selfsent;
 
 void WCVNode::add2map(int node_id, OPPPingSenderApp* app) {
 	WCVNode::node2app[node_id] = app;

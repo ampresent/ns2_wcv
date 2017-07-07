@@ -350,9 +350,10 @@ int getFlow(DiffusionRouting* dr) {
 }
 
 double WCVSenderApp::auto_accurate_fake_coefficient() {
-	//int O = getFlow((DiffusionRouting*)dr_);
-	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
-	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
+	int O1 = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	int O2 = getFlow((DiffusionRouting*)dr_);
+	int selfsent  = WCVNode::selfsent[((DiffusionRouting*)dr_)->getNodeId()];
+	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Node Flow %d - Routing Entry Flow %d =?= Self Sent Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O1, O2, selfsent);
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
