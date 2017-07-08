@@ -323,7 +323,7 @@ double WCVSenderApp::auto_fake_coefficient() {
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
 			it!=WCVNode::node2app.end();it++){
 
-		visibles.insert(it -> first);
+		//visibles.insert(it -> first);
 		I += getDegree((DiffusionRouting*)(it -> second -> dr()), false, visibles);
 	}
 	// O: filter1..routing_entry_1..round_id_s..gradient_s
@@ -334,7 +334,10 @@ double WCVSenderApp::auto_fake_coefficient() {
 	int N = visibles.size();
 
 	double coefficient = 2.0 * (O<I?O:I) / N;
-	coefficient = coefficient > 1 ? 1 : coefficient;
+
+	assert(coefficient > 1);
+
+	//coefficient = coefficient > 1 ? 1 : coefficient;
 	
 	return coefficient;
 }
