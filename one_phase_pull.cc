@@ -1173,6 +1173,7 @@ void OnePhasePullFilter::processNewMessage(Message *msg)
 
     // Step 1: Look for the same data type
     routing_entry = findRoutingEntry(msg->msg_attr_vec_);
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: routing_entry size is %d\n", ((DiffusionRouting *)dr_)->getNodeId(), routing_list_.size());
 
     if (!routing_entry){
       // Create a new routing entry for this data type
