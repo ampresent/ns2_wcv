@@ -1,9 +1,11 @@
 #!/usr/bin/env zsh
 
-nn=14
-x=50
-y=50
-stop=2000
+nn=43
+x=100
+y=100
+stop=8000
+cease=2000
+war=1000
 echo > initialize
 echo > data_flow
 echo > charging_request
@@ -37,6 +39,6 @@ cat ./location
 
 #N=30; (for i in `seq $N`; do for j in `seq 0 1`; do echo "\$ns_ at "$((i*(20.1/$N)+70)) '"$con_('$j') publish"'; done; echo "\$ns_ at "$(((i+1)*(20.1/$N)+70)) '"$snk_ subscribe"'; done; )|tee -a data_flow
 
-N=40; (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$stop/1000000" | bc -l); echo "\$ns_ at $t "'"$con_('$j') publish"'; done; rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$stop/1000000" | bc -l); echo "\$ns_ at $t "'"$snk_ subscribe"'; done; )|tee data_flow
+N=40; (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$cease/1000000" | bc -l); echo "\$ns_ at $t "'"$con_('$j') publish"'; done; rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$cease/1000000" | bc -l); echo "\$ns_ at $t "'"$snk_ subscribe"'; done; )|tee data_flow
 
-N=20; (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$stop/1000000" | bc -l); auto=""; [ $(bc<<<"$t>$((stop/2))") -eq 1 ] && auto='auto'; echo "\$ns_ at $t "'"$src_('$j') publish '$auto'"'; done; done;echo "\$ns_ at 0 "'"$wcv_ subscribe"'; )|tee charging_request
+N=20; (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$cease/1000000" | bc -l); auto=""; [ $(bc<<<"$t>$war") -eq 1 ] && auto='auto'; echo "\$ns_ at $t "'"$src_('$j') publish '$auto'"'; done; done;echo "\$ns_ at 0 "'"$wcv_ subscribe"'; )|tee charging_request
