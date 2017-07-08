@@ -93,6 +93,8 @@ int WCVSenderApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "publish") == 0) {
 benign:
+	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
       run();
       return TCL_OK;
     }
@@ -105,12 +107,10 @@ benign:
 	      }
 	      if (strcmp(argv[2], "auto") == 0) {
 		  double coefficient = auto_fake_coefficient();
+		  if (coefficient < 0) {
+			  goto benign;
+		  }
 		  run((0.2+coefficient*0.8) * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
-		  return TCL_OK;
-	      } else if (strcmp(argv[2], "accurate") == 0){
-		      auto_accurate_fake_coefficient();
-		  double coefficient = auto_fake_coefficient();
-		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
 		  return TCL_OK;
 	      } else if (strcmp(argv[2], "accurate") == 0){
 		      auto_accurate_fake_coefficient();
@@ -382,10 +382,15 @@ double WCVSenderApp::auto_fake_coefficient() {
 	// O <= N, I <= N
 	
 	int N = visibles.size();
+	
+	if (N == 0) {
+		DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Neighbors empty !!!\n", ((DiffusionRouting*)dr_)->getNodeId());
+		return -1;
+	}
 
 	double coefficient = 2.0 * (O<I?O:I) / N;
 
-	assert(coefficient > 1);
+	assert(coefficient <= 1);
 
 	//coefficient = coefficient > 1 ? 1 : coefficient;
 	
