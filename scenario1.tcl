@@ -175,9 +175,10 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 for {set i 0} {$i < $val(nn) } {incr i} {
    $ns_ at [expr $val(stop)+0.000001] "$node_($i) reset";
 }
-$ns_ at $val(stop) "stop"
-$ns_ at [expr $val(stop)+0.000001] "puts \"\nNS EXITING...\""
-$ns_ at [expr $val(stop)+0.000001] "$ns_ halt"
+$ns_ at $val(stop) "$ns_ nam-end-wireless $val(stop)"
+$ns_ at [expr $val(stop)+0.001] "stop"
+$ns_ at [expr $val(stop)+0.001] "puts \"\nNS EXITING...\""
+$ns_ at [expr $val(stop)+0.002] "$ns_ halt"
 
 proc stop {} {
     global ns_ scenario1 scenario1nam
