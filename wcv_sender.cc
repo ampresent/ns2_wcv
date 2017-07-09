@@ -426,6 +426,7 @@ int getFlow(DiffusionRouting* dr) {
 }
 
 double WCVSenderApp::auto_accurate_fake_coefficient() {
+<<<<<<< Updated upstream
 	/*
 	 * Only For Debug Use, cause sensors can't see other malicious nodes
 	 *
