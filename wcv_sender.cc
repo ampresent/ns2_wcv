@@ -53,8 +53,7 @@ public:
   TclObject* create(int , const char*const*) {
     return(new WCVSenderApp());
   }
-} class_ping_sender;
-
+} class_ping_sender; 
 void WCVSendDataTimer::expire(Event *) {
   a_->send();
 }
@@ -132,6 +131,33 @@ void WCVSenderReceive::recv(NRAttrVec *data, NR::handle my_handle)
   app_->recv(data, my_handle);
 }
 
+void processMalicious(NRAttrVec *data) {
+	NRSimpleAttribute<int> *nrtype = NRTypeAttr.find(data);
+
+	int type = -1;
+
+	if (!nrtype) {
+		type = *(int*)nrtype->val_;
+	}
+
+	if (type == WCV_TYPE) {
+		NRSimpleAttribute<double> *nrflow = NRFlowAttr.find(data);
+		NRSimpleAttribute<int> *nrnode = NRNodeAttr.find(data);
+		double flow = *(double*)nrflow->val_;
+		int node = *(int*)nrnode->val_;
+		map<int, double>::iterator it;
+		it = flow_vec.find(node);
+		if (it == flow_vec.end()) {
+			count_mal ++;
+			sum_flow += flow;
+			flow_vec[node] = flow;
+		} else {
+			sum_flow = sum_mal - *it + flow;
+			*it = flow;
+		}
+	}
+}
+
 void WCVSenderApp::recv(NRAttrVec *data, NR::handle )
 {
   NRSimpleAttribute<int> *nrclass = NULL;
@@ -159,6 +185,11 @@ void WCVSenderApp::recv(NRAttrVec *data, NR::handle )
     num_subscriptions_--;
     break;
 
+  case NRAttribute::DATA:
+
+    processMalicious(data);
+
+    break;
   default:
 
     DiffPrintWithTime(DEBUG_ALWAYS, "Received an unknown message (%d)!\n", nrclass->getVal());
@@ -188,6 +219,40 @@ handle WCVSenderApp::setupInterSubscription() {
   attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
 }
 */
+
+handle WCVSenderApp::setupMaliciousSubscription()
+{
+  NRAttrVec attrs;
+  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+
+  attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM));
+  attrs.push_back(NRTypeAttr.make(NRAttribute::IS, FLOW_TYPE));
+  attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
+
+  handle h = dr_->subscribe(&attrs, mr_);
+
+  ClearAttrs(&attrs);
+
+  return h;
+}
+
+handle WCVSenderApp::setupMaliciousPublication(double flow)
+{
+  NRAttrVec attrs;
+
+  attrs.push_back(NRClassAttr.make(NRAttribute::IS, NRAttribute::DATA_CLASS));
+  attrs.push_back(NRAlgorithmAttr.make(NRAttribute::IS, NRAttribute::ONE_PHASE_PULL_ALGORITHM));
+  attrs.push_back(NRTypeAttr.make(NRAttribute::IS, FLOW_TYPE));
+  attrs.push_back(NRFlow.make(NRAttribute::IS, FLOW_TYPE));
+  //attrs.push_back(IDAttr.make(NRAttribute::IS, node->nodeid()));
+
+  handle h = dr_->publish(&attrs);
+
+  ClearAttrs(&attrs);
+
+  return h;
+}
 
 handle WCVSenderApp::setupSubscription(double fake)
 {
@@ -361,9 +426,38 @@ int getFlow(DiffusionRouting* dr) {
 }
 
 double WCVSenderApp::auto_accurate_fake_coefficient() {
-	//int O = getFlow((DiffusionRouting*)dr_);
-	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
-	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
+	/*
+	 * Only For Debug Use, cause sensors can't see other malicious nodes
+	 *
+	 */
+	int flow = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), flow);
+
+	/*
+	if (malsub) {
+		((DiffusionRouting*)dr_)->unsubscribe(malsub);
+	}
+	if (malpub) {
+		((DiffusionRouting*)dr_)->unpublish(malpub);
+	}
+	malsub = setupMaliciousSubscription();
+	malpub = setupMaliciousPublication(O);
+	sendMal();
+	*/
+
+	map<int, double>::iterator it;
+
+	double max_flow = 0;
+	for (it=flow_vec.begin();it!=flow_vec.end();it++) {
+		if (max_flow > *it)
+			max_flow = *it;
+	}
+
+	if (max_flow == 0) {
+		return 1;
+	} else {
+		return flow / max_flow;
+	}
 }
 
 double WCVSenderApp::auto_fake_coefficient() {
