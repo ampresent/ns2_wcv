@@ -65,9 +65,7 @@ void WCVSenderApp::send()
 
   MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
   Phy* n;
-  for(n = node->ifhead().lh_first; n; n = n->nextnode() )
-    (static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
-  node->log_energy(1);
+  node->log_energy(1, true);
 
   // Send data if we have active subscriptions
   if (num_subscriptions_ > 0){
@@ -199,9 +197,7 @@ handle WCVSenderApp::setupSubscription(double fake)
   attrs.push_back(NRTypeAttr.make(NRAttribute::IS, WCV_TYPE));
   attrs.push_back(NRScopeAttr.make(NRAttribute::IS, NRAttribute::NODE_LOCAL_SCOPE));
   if (fake < 0) {
-	  Phy* n;
-	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
-		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
+	  node -> log_energy(1, true);
 
 	  if (node -> energy_model() -> energy() >
 			node -> energy_model() -> initialenergy() * 0.8) {
@@ -239,9 +235,7 @@ handle WCVSenderApp::setupPublication(double fake)
   attrs.push_back(LatitudeAttr.make(NRAttribute::IS, latitude));
   attrs.push_back(LongitudeAttr.make(NRAttribute::IS, longitude));
   if (fake < 0) {
-	  Phy* n;
-	for(n = node->ifhead().lh_first; n; n = n->nextnode() )
-		(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
+	  node -> log_energy(1, true);
 
 	  if (node -> energy_model() -> energy() >
 			node -> energy_model() -> initialenergy() * 0.8) {
