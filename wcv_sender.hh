@@ -109,6 +109,8 @@ private:
   double auto_fake_coefficient();
   double getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors);
   double auto_accurate_fake_coefficient();
+
+  double rangex, rangey, r;
 };
 
 class WCVSenderReceive : public NR::Callback {

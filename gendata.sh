@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
-nn=43
-x=100
-y=100
+nn=626
+x=1000
+y=1000
 stop=8000
 cease=2000
 war=1000

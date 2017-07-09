@@ -121,6 +121,18 @@ benign:
 	      }
       }
   }
+  if (argc == 4) {
+        if (strcmp(argv[1], "config") == 0) {
+  	      if (strcmp(argv[2], "rangex")) {
+  		      rangex = atof(argv[3]);
+  	      }else if (strcmp(argv[2], "rangey")) {
+  		      rangey = atof(argv[3]);
+  	      }else if (strcmp(argv[2], "r")) {
+  		      r = atof(argv[3]);
+  	      }
+  	      return TCL_OK;
+        }
+  }
   return DiffApp::command(argc, argv);
 }
 #endif // NS_DIFFUSION
@@ -375,18 +387,22 @@ double WCVSenderApp::auto_fake_coefficient() {
 	
 	// O <= N, I <= N
 	
+	const static double pi = 3.141592653589793;
+	static double N = pi * r*r / ((rangex-r*2)*(rangey-r*2));
+	/*
 	int N = visibles.size();
 	
 	if (N == 0) {
 		DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Neighbors empty !!!\n", ((DiffusionRouting*)dr_)->getNodeId());
 		return -1;
 	}
+	*/
 
 	double coefficient = 2.0 * (O<I?O:I) / N;
 
-	assert(coefficient <= 1);
+	//assert(coefficient <= 1);
 
-	//coefficient = coefficient > 1 ? 1 : coefficient;
+	coefficient = coefficient > 1 ? 1 : coefficient;
 	
 	int flow = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), flow);
