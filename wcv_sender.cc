@@ -107,7 +107,8 @@ benign:
 		  if (coefficient < 0) {
 			  goto benign;
 		  }
-		  run((0.2+coefficient*0.8) * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  //run((0.2+coefficient*0.8) * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
+		  run(coefficient * ((DiffusionRouting*)dr_)->getNode()->energy_model()->initialenergy());
 		  return TCL_OK;
 	      } else if (strcmp(argv[2], "accurate") == 0){
 		      auto_accurate_fake_coefficient();
@@ -379,7 +380,8 @@ double WCVSenderApp::auto_accurate_fake_coefficient() {
 double WCVSenderApp::auto_fake_coefficient() {
 	set<int> visibles;
 	double O = getDegree((DiffusionRouting*)dr_, true, visibles);
-	double I = 0;
+	// At lease comes from this node
+	double I = 1;
 	for (map<int, OPPPingSenderApp*>::iterator it=WCVNode::node2app.begin();
 			it!=WCVNode::node2app.end();it++){
 
@@ -392,7 +394,7 @@ double WCVSenderApp::auto_fake_coefficient() {
 	// O <= N, I <= N
 	
 	const static double pi = 3.141592653589793;
-	static double N = pi * r*r / ((rangex-r*2)*(rangey-r*2));
+	static double exp = (n-1) * pi * r*r / (rangex*rangey) + 1;
 	/*
 	int N = visibles.size();
 	
@@ -402,7 +404,7 @@ double WCVSenderApp::auto_fake_coefficient() {
 	}
 	*/
 
-	double coefficient = 2.0 * (O<I?O:I) / N;
+	double coefficient = 2.0 * (O<I?O:I) / exp;
 
 	//assert(coefficient <= 1);
 
