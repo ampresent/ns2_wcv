@@ -59,6 +59,9 @@ int WCVNode::set_destination(double x, double y, double speed, WCVHandler* wcv_h
 	if (dist < 0.15) {
 		return -1;
 	}
+	if (dist * 0.01 > energy_model() -> energy())
+		return -1;
+
 	int ret = MobileNode::set_destination(x, y, speed);
 	if (ret) {
 		return ret;
