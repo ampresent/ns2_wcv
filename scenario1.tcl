@@ -137,10 +137,6 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 	}
 	# src_ is used to communicate with WCV
 	set src_($i) [new Application/DiffApp/PingSender/WCV]
-	$src_($i) config rangex [expr $val(x)-$val(dest)*2]
-	$src_($i) config rangey [expr $val(y)-$val(dest)*2]
-	$src_($i) config r $val(dest)
-	$src_($i) config n $val(nn)
 	$ns_ attach-diffapp $node_($i) $src_($i)
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
