@@ -2,6 +2,8 @@
 
 script=`mktemp`
 
+rm /tmp/points_*
+
 cat >> $script << EOF
 set xlabel "time"
 set ylabel "energy"
