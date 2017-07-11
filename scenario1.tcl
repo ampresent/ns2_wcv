@@ -106,7 +106,7 @@ $ns_ node-config -adhocRouting $val(rp) \
   -initialEnergy 1\
   -rxPower 0.4\
   -txPower 0.5\
-  -idlePower 0.0003\
+  -idlePower 0.00003\
   -channel $chan_1_ 
 
 for {set i 0} {$i < $val(nn) } {incr i} {
