@@ -192,9 +192,6 @@ handle OPPPingSenderApp::setupPublication()
 void OPPPingSenderApp::run()
 {
   struct timeval tmv;
-#ifndef NS_DIFFUSION
-  int retval;
-#endif // !NS_DIFFUSION
 
 #ifdef INTERACTIVE
   char input;
@@ -229,38 +226,7 @@ void OPPPingSenderApp::run()
   counterAttr_ = AppCounterAttr.make(NRAttribute::IS, last_seq_sent_);
   data_attr_.push_back(counterAttr_);
 
-#ifndef NS_DIFFUSION
-  // Main thread will send ping probes
-  while(1){
-#ifdef INTERACTIVE
-    FD_SET(0, &FDS);
-    fprintf(stdout, "Press <Enter> to send a ping probe...");
-    fflush(NULL);
-    select(1, &FDS, NULL, NULL, NULL);
-    input = getc(stdin);
-#else
-    sleep(SEND_DATA_INTERVAL);
-#endif // INTERACTIVE
-
-    // Send data packet if we have active subscriptions
-    if (num_subscriptions_ > 0){
-      // Update time in the packet
-      GetTime(&tmv);
-      lastEventTime_->seconds_ = tmv.tv_sec;
-      lastEventTime_->useconds_ = tmv.tv_usec;
-
-      // Send data probe
-      DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
-      retval = dr_->send(pubHandle_, &data_attr_);
-
-      // Update counter
-      last_seq_sent_++;
-      counterAttr_->setVal(last_seq_sent_);
-    }
-  }
-#else
   send();
-#endif // !NS_DIFFUSION
 }
 
 #ifdef NS_DIFFUSION
