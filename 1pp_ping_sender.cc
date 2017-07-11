@@ -78,6 +78,7 @@ void OPPPingSenderApp::send()
     lastEventTime_->useconds_ = tmv.tv_usec;
 
     // Send data probe
+    MobileNode* node = ((DiffusionRouting*)dr_)->getNode();
     if (node->energy_model()->energy() > 0) {
 	    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
     }
