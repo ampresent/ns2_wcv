@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 
-nn=626
-x=1000
-y=1000
-stop=8000
-cease=2000
-war=1000
+nn=14
+x=50
+y=50
+r=30
+stop=200
+war=0
 echo > initialize
 echo > data_flow
 echo > charging_request
@@ -44,3 +44,5 @@ N=$((stop/4)); (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(
 for t in `seq 0 15 $stop`; do
 	echo "\$ns_ at $t "'"$snk_ subscribe"' >> data_flow;
 done
+
+N=20; (for i in `seq $N`; do for j in `seq 0 $((nn-3))`; do rand_int=$(shuf -i 1-1000000 -n 1); t=$(echo "$rand_int*$stop/1000000" | bc -l); auto=""; [ $(shuf -i 0-1 -n 1) -eq 1 ] && auto='auto'; echo "\$ns_ at $t "'"$src_('$j') publish '$auto'"'; done; done;echo "\$ns_ at 0 "'"$wcv_ subscribe"'; )|tee charging_request
