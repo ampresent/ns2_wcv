@@ -64,6 +64,7 @@ void WCVSenderApp::send()
   struct timeval tmv;
 
   MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
+  Phy* n;
   node->log_energy(1, true);
 
   // Send data if we have active subscriptions
@@ -123,14 +124,12 @@ benign:
   }
   if (argc == 4) {
         if (strcmp(argv[1], "config") == 0) {
-  	      if (strcmp(argv[2], "rangex") == 0) {
+  	      if (strcmp(argv[2], "rangex")) {
   		      rangex = atof(argv[3]);
-  	      }else if (strcmp(argv[2], "rangey") == 0) {
+  	      }else if (strcmp(argv[2], "rangey")) {
   		      rangey = atof(argv[3]);
-  	      }else if (strcmp(argv[2], "r") == 0) {
+  	      }else if (strcmp(argv[2], "r")) {
   		      r = atof(argv[3]);
-  	      }else if (strcmp(argv[2], "n") == 0) {
-  		      n = atof(argv[3]);
   	      }
   	      return TCL_OK;
         }
@@ -300,7 +299,7 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 			NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
 		};
 		// If wcv data packet is found ( not charging packet )
-		if (OneWayMatch(&attrs, (*rei)->attrs_) && OneWayMatch((*rei)->attrs_, &attrs)) {
+		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
 			assert(sole_routing_flag == false);
 			sole_routing_flag = true;
 			list<RoundIdEntry*> roundlist = (*rei)->round_ids_;
@@ -313,9 +312,6 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
 					// So degree is no more than N
 					degree += 1.0 * gl.size() / roundlist.size();
-					if (gl.size() > 0) {
-						DiffPrintWithTime(DEBUG_ALWAYS, "Node %d: Not Empty !!!\n", dr->getNodeId());
-					}
 					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
 						visibles.insert((*it) -> node_id_);
 					}
