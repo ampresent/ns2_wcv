@@ -111,6 +111,7 @@ private:
   double auto_accurate_fake_coefficient();
 
   double rangex, rangey, r;
+  int n;
 };
 
 class WCVSenderReceive : public NR::Callback {
