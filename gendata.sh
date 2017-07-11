@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+<<<<<<< HEAD
 nn=14
 x=50
 y=50
