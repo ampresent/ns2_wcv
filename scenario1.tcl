@@ -176,9 +176,6 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 
 # Tell nodes simulation ends at 30.0
 for {set i 0} {$i < $val(nn) } {incr i} {
-	for {set t 0} {$t < $val(stop)} {set t [expr $t+100]} {
-	   $ns_ at $t "$node_($i) log-energy";
-   }
    $ns_ at [expr $val(stop)+0.000001] "$node_($i) reset";
 }
 $ns_ at $val(stop) "$ns_ nam-end-wireless $val(stop)"
