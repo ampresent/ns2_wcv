@@ -13,8 +13,8 @@ echo > location
 
 cat > initialize << EOF
 set val(nn)             $nn                         ;# number of mobilenodes
-set val(x)		$x
-set val(y)		$y
+set val(x)		$((x+r*2))
+set val(y)		$((y+r*2))
 set wcv			$((nn-1))
 set base		$((nn-2))
 set malicious {`shuf -i 0-$((nn-3)) -n $(((nn-2) / 1)) | xargs `}            
@@ -27,8 +27,8 @@ import random
 X = $x
 Y = $y
 for i in range($nn):
-  x = random.uniform(0, $x)
-  y = random.uniform(0, $y)
+  x = random.uniform($r, $x+$r)
+  y = random.uniform($r, $y+$r)
   print "\$node_({}) set X_ {}".format(i ,x)
   print "\$node_({}) set Y_ {}".format(i, y)
   print "\$node_({}) set Z_ 0.000000000000".format(i)

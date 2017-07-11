@@ -11,6 +11,7 @@ set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set opt(filters)        OnePhasePullFilter
 set val(ifqlen)         150                         ;# max packet in ifq
 set val(rp)             Directed_Diffusion		;# routing protocol
+set val(dest)		30
 
 source ./initialize
 
@@ -39,23 +40,23 @@ Phy/WirelessPhy set L_ 0.5   ;#Define the system loss in TwoRayGround
 Phy/WirelessPhy set  bandwidth_  28.8*10e3   ;#28.8 kbps 
 # For model 'TwoRayGround'
 # The received signals strenghts  in different distances 
-set dist(5m)  7.69113e-06
-set dist(9m)  2.37381e-06
-set dist(10m) 1.92278e-06
-set dist(11m) 1.58908e-06
-set dist(12m) 1.33527e-06
-set dist(13m) 1.13774e-06
-set dist(14m) 9.81011e-07
-set dist(15m) 8.54570e-07
-set dist(16m) 7.51087e-07
-set dist(20m) 4.80696e-07
-set dist(25m) 3.07645e-07
-set dist(30m) 2.13643e-07
-set dist(35m) 1.56962e-07
-set dist(40m) 1.20174e-07
-set dist(100m) 1.92278e-08
-Phy/WirelessPhy set CSThresh_  $dist(30m)
-Phy/WirelessPhy set RXThresh_  $dist(30m)
+set dist(5)  7.69113e-06
+set dist(9)  2.37381e-06
+set dist(10) 1.92278e-06
+set dist(11) 1.58908e-06
+set dist(12) 1.33527e-06
+set dist(13) 1.13774e-06
+set dist(14) 9.81011e-07
+set dist(15) 8.54570e-07
+set dist(16) 7.51087e-07
+set dist(20) 4.80696e-07
+set dist(25) 3.07645e-07
+set dist(30) 2.13643e-07
+set dist(35) 1.56962e-07
+set dist(40) 1.20174e-07
+set dist(100) 1.92278e-08
+Phy/WirelessPhy set CSThresh_  $dist($val(dest))
+Phy/WirelessPhy set RXThresh_  $dist($val(dest))
 #Phy/WirelessPhy set CPThresh_ 10 
 # According to the Two-Ray Ground propagation model 
 #Pr(d) = Pt*Gt*Gr*ht*ht*hr*hr/(d*d*d*d*L)
@@ -136,9 +137,10 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 	}
 	# src_ is used to communicate with WCV
 	set src_($i) [new Application/DiffApp/PingSender/WCV]
-	$src_($i) config rangex $val(x)
-	$src_($i) config rangey $val(y)
-	$src_($i) config r 30
+	$src_($i) config rangex [expr $val(x)-$val(dest)*2]
+	$src_($i) config rangey [expr $val(y)-$val(dest)*2]
+	$src_($i) config r $val(dest)
+	$src_($i) config n $val(nn)
 	$ns_ attach-diffapp $node_($i) $src_($i)
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
