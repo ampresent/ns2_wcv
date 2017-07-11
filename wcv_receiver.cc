@@ -42,6 +42,8 @@
 
 #include "wcv_receiver.hh"
 #include "wcv.h"
+#include <algorithm>
+using std::swap;
 
 #ifdef NS_DIFFUSION
 static class WCVReceiverAppClass : public TclClass {
@@ -206,6 +208,20 @@ void WCVReceiverApp::schedule(){
   MobileNode* sender = NULL;
   struct request popout;
 
+  int length = rear >= front? rear-front : rear - front + MODULER;
+
+    for (int i = 0; i < length; i++)
+    {
+        for (int j = 0; j < length - i - 1; j++)
+        {
+            if (req_queue[(j+front)%MODULER] > req_queue[(j + 1+front)%MODULER])
+            {
+                swap(req_queue[(j+front)%MODULER], req_queue[(j + 1+front)%MODULER]);
+            }
+        }
+    }
+
+
   while (front != rear) {
 	  popout = req_queue[front];
 	  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
@@ -215,6 +231,7 @@ void WCVReceiverApp::schedule(){
 		  delete wcv_handler;
 	  sender = (MobileNode*)Node::get_node_by_address(popout.handle);
 	  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
+
 	  if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
 	    DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, drop and wait for retry\n");
 	    // Drop this request

@@ -94,6 +94,9 @@ private:
 	  float lat;
 	  float lon;
 	  double energy;
+	  bool operator>(const request& r2) {
+		  return energy > r2.energy;
+	  }
   };
 
   struct request req_queue[MODULER];
