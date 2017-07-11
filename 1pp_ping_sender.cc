@@ -80,7 +80,9 @@ void OPPPingSenderApp::send()
     lastEventTime_->useconds_ = tmv.tv_usec;
 
     // Send data probe
-    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
+    if (node->energy_model()->energy() > 0) {
+	    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
+    }
     // The original data packet must be included
     WCVNode::statistics[((DiffusionRouting *)dr_)->getNodeId()] ++;
     dr_->send(pubHandle_, &data_attr_);
