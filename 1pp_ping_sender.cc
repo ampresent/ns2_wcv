@@ -67,8 +67,6 @@ void OPPPingSenderApp::send()
     DiffPrintWithTime(DEBUG_ALWAYS, "&nodes[%d] = 0x%x\n", i, mygod->node_list()[i]);
     */
 
-  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
-  node->log_energy(1, true);
   struct timeval tmv;
 
   // Send data if we have active subscriptions
@@ -90,9 +88,10 @@ void OPPPingSenderApp::send()
     // Update counter
     last_seq_sent_++;
     counterAttr_->setVal(last_seq_sent_);
-  } 
+  } else {
   // re-schedule the timer 
   	sdt_.resched(SEND_DATA_INTERVAL);
+  }
 }
 
 int OPPPingSenderApp::command(int argc, const char*const* argv) {
@@ -153,8 +152,6 @@ void OPPPingSenderApp::recv(NRAttrVec *data, NR::handle )
 
 handle OPPPingSenderApp::setupSubscription()
 {
-  MobileNode *node = ((DiffusionRouting *)dr_)->getNode();
-  node->log_energy(1, true);
   NRAttrVec attrs;
 
   attrs.push_back(NRClassAttr.make(NRAttribute::NE, NRAttribute::DATA_CLASS));
