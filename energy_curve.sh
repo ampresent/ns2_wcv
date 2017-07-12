@@ -10,8 +10,15 @@ set ylabel "energy"
 set title "Energy Curve"
 EOF
 
+nodes=($@)
+n=$(cat initialize|grep nn|awk '{print $3}'|xargs)
+if [ "$1" = "sensors" ]; then
+	nodes=($(seq 0 $((n-3))))
+elif [ "$1" = "wcv" ]; then
+	nodes=($((n-1)))
+fi
 
-for i in $@; do 
+for i in $nodes; do 
 	ag '\-n '$i' \-e' scenario1.tr >/dev/null 2>&1 || continue
 
 	points="/tmp/points_$i"
