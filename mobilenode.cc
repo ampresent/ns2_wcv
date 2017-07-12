@@ -348,6 +348,7 @@ MobileNode::log_energy(int flag, bool update)
 		return;
 	Phy* n;
 	if (update) {
+		assert(ifhead() != NULL && ifhead().next_node() == NULL);
 		for(n = ifhead().lh_first; n; n = n->nextnode() )
 			(static_cast<WirelessPhy*>(n))->UpdateIdleEnergy();
 	} else {

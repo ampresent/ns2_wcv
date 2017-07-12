@@ -127,10 +127,8 @@ benign:
   		      rangex = atof(argv[3]);
   	      }else if (strcmp(argv[2], "rangey") == 0) {
   		      rangey = atof(argv[3]);
-  	      }else if (strcmp(argv[2], "r") == 0) {
-  		      r = atof(argv[3]);
   	      }else if (strcmp(argv[2], "n") == 0) {
-  		      n = atof(argv[3]);
+  		      n = atoi(argv[3]);
   	      }
   	      return TCL_OK;
         }
@@ -314,9 +312,6 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 					list<OPPGradientEntry*> gl = (*rdi)->gradients_;
 					// So degree is no more than N
 					degree += 1.0 * gl.size() / roundlist.size();
-					if (gl.size() > 0) {
-						DiffPrintWithTime(DEBUG_ALWAYS, "Node %d: Not Empty !!!\n", dr->getNodeId());
-					}
 					for (list<OPPGradientEntry*>::iterator it=gl.begin();it!=gl.end();it++) {
 						visibles.insert((*it) -> node_id_);
 					}
