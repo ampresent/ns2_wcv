@@ -300,7 +300,8 @@ double WCVSenderApp::getDegree(DiffusionRouting* dr, bool out, set<int>& visible
 			NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
 		};
 		// If wcv data packet is found ( not charging packet )
-		if (OneWayMatch(&attrs, (*rei)->attrs_) && OneWayMatch((*rei)->attrs_, &attrs)) {
+		//if (OneWayMatch(&attrs, (*rei)->attrs_) && OneWayMatch((*rei)->attrs_, &attrs)) {
+		if (OneWayPerfectMatch(&attrs, (*rei)->attrs_)) {
 			assert(sole_routing_flag == false);
 			sole_routing_flag = true;
 			list<RoundIdEntry*> roundlist = (*rei)->round_ids_;
