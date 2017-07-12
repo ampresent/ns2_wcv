@@ -10,6 +10,15 @@ class WCVNode;
 class OPPPingSenderApp;
 class WCVReceiverApp;
 
+#define WCV_POWER_PER_M 0.01
+#define MOVING_SPEED 1
+#define CHARGING_S
+#define CHARGING_SPEED 0.3
+#define CHARGING_EFFICIENCY 0.45
+#define WIRED_CHARGING_SPEED 0.9
+#define WIRED_CHARGING_EFFICIENCY 0.9
+#define RECV_PERIOD 10
+
 // The sensor to be charged
 // Suppose WCV and sensor work together on WCVHandler 
 // Like an simplified end-to-end protocol
@@ -38,6 +47,8 @@ class WCVNode : public MobileNode {
 		void recv(WCVHandler* wcv_handler);
 		void giveup_sched(WCVHandler* wcv_handler);
 		static void add2map(int node_id, OPPPingSenderApp* app);
+		double moving_energy(double dist);
+		double idle_energy(double dist);
 };
 
 #endif // ns_wcv_h

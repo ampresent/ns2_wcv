@@ -61,6 +61,14 @@ int WCVReceiverApp::command(int argc, const char*const* argv) {
       return TCL_OK;
     }
    }
+  if (argc == 4) {
+    if (strcmp(argv[1], "config") == 0) {
+      if (strcmp(argv[2], "base") == 0) {
+	base = (MobileNode*)Node::get_node_by_address(atoi(argv[3]));
+	return TCL_OK;
+      }
+    }
+  }
   return DiffApp::command(argc, argv);
 }
 
@@ -208,8 +216,8 @@ void WCVReceiverApp::schedule(){
   MobileNode* sender = NULL;
   struct request popout;
 
+  // Sort request by energy
   int length = rear >= front? rear-front : rear - front + MODULER;
-
     for (int i = 0; i < length; i++)
     {
         for (int j = 0; j < length - i - 1; j++)
@@ -222,35 +230,79 @@ void WCVReceiverApp::schedule(){
     }
 
 
-  while (front != rear) {
-	  popout = req_queue[front];
-	  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
+  bool energy_too_low = false;
+  double wcv_energy = node -> energy_model()->energy();
+  double dist = node->distance(base);
+  double get_back = node->moving_energy(dist);
+  double reserve = get_back;
+  // Hasn't reached the destination, so don't know the exact energy, but popout.energy
 
-          set_state(IDLE);
-	  if (wcv_handler)
-		  delete wcv_handler;
-	  sender = (MobileNode*)Node::get_node_by_address(popout.handle);
-	  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
+  if (wcv_energy < get_back + reserve) {
+	  energy_too_low = true;
+  } else {
+	    if (front != rear) {
+		energy_too_low = true;
+		set_state(IDLE);
+	    }
+	  int new_rear = rear;
+	  while (front != rear) {
+		  popout = req_queue[front];
+		  DiffPrintWithTime(DEBUG_ALWAYS, "Travel to (%lf, %lf)\n", popout.lon, popout.lat);
 
-	  if (node->set_destination(popout.lon+DX, popout.lat+DY, 1, wcv_handler)) {
-	    DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, drop and wait for retry\n");
-	    // Drop this request
-	    front = (front + 1) % MODULER;
-	  } else {
-	    set_state(MOVING);
-	    return;
+		  if (wcv_handler)
+			  delete wcv_handler;
+		  sender = (MobileNode*)Node::get_node_by_address(popout.handle);
+		  wcv_handler = new WCVHandler(node, this, sender, popout.energy);
+
+		  double moving = node->moving_energy(node->distance(sender));
+		  double get_back = node->moving_energy(sender->distance(base));
+		  double reserve = get_back;
+		  // Dispite how many energy it requires, just go and checkout it out
+		  //double to_charge = sender -> energy_model() -> initialenergy() - popout.energy;
+		  //double charging_time = to_charge / CHARGING_SPEED;
+		  //double idle = node -> idle_energy(charging_time);
+
+		  if (wcv_energy < moving + get_back + reserve ||
+				  node->set_destination(popout.lon+DX, popout.lat+DY, MOVING_SPEED, wcv_handler)) {
+		      DiffPrintWithTime(DEBUG_ALWAYS, "Failed to set_destination, drop and wait for retry\n");
+		      if (wcv_energy < moving + get_back + reserve) {
+		            // Failing because other reasons
+		            req_queue[new_rear] = req_queue[front];
+		            front = (front + 1) % MODULER;
+		            new_rear = (new_rear + 1) % MODULER;
+		      } else {
+		            // failing because energy is too low 
+		            // Drop this request
+		            front = (front + 1) % MODULER;
+		            energy_too_low = false;
+		            set_state(IDLE);
+		      }
+		  } else {
+		    set_state(MOVING);
+		    return;
+		  }
 	  }
+	  rear = new_rear;
   }
 
-  // If no valid request, then resched
-  
-  if (subHandle_) {
-     DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
-     dr_ -> unsubscribe(subHandle_);
+  if (energy_too_low){
+	  assert(wcv_energy >= get_back + reserve);
+	  set_state(BACK);
+	  // Don't need to refill parameters for Handler, so use the existent wcv_handler
+	  int ret = node -> set_destination(base->X()+DX, base->Y()+DY, MOVING_SPEED, wcv_handler);
+	  assert(ret == 0);
+	  // Moving energy
+	  node -> energy_model() -> DecrIdleEnergy(dist/MOVING_SPEED, WCV_POWER_PER_M*MOVING_SPEED);
+  } else { // If no valid request, then resched
+	  if (subHandle_) {
+	     DiffPrintWithTime(DEBUG_ALWAYS, "Receiver unsubscribe %u\n", subHandle_);
+	     dr_ -> unsubscribe(subHandle_);
+	  }
+	  set_state(RECEIVING);
+	  subHandle_ = setupSubscription();
+	  // Don't need to refill parameters for Handler, so use the existent wcv_handler
+	  node -> giveup_sched(wcv_handler);
   }
-  set_state(RECEIVING);
-  subHandle_ = setupSubscription();
-  node -> giveup_sched(wcv_handler);
 }
 
 void WCVReceiverApp::ack() {
@@ -287,13 +339,6 @@ void WCVReceiverApp::run()
 	  if (!wcv_handler)
 		  wcv_handler = new WCVHandler(node, this, NULL, 0);
 	  node -> recv(wcv_handler);
-
-#ifndef NS_DIFFUSION
-	  // Do nothing
-	  while (1){
-	    sleep(1000);
-	  }
-#endif // !NS_DIFFUSION
   }
 }
 
@@ -312,6 +357,7 @@ WCVReceiverApp::WCVReceiverApp(int argc, char **argv)
   last_seq_recv_ = 0;
   num_msg_recv_ = 0;
   first_msg_recv_ = -1;
+  base = NULL;
 
   mr_ = new WCVReceiverReceive(this);
 

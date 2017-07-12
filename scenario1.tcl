@@ -161,6 +161,7 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 set wcv_ [new Application/DiffApp/PingReceiver/WCV]
 set snk_ [new Application/DiffApp/PingReceiver/OPP]
 
+$wcv_ config base $base
 $node_($wcv) NodeLabel wcv
 $ns_ attach-diffapp $node_($wcv) $wcv_
 $node_($base) NodeLabel base

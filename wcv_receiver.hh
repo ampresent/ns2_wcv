@@ -84,6 +84,7 @@ public:
 	  wcv_state = s; 
   }
   void ack();
+  MobileNode* base;
 
 private:
   // NR Specific variables

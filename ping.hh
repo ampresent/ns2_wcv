@@ -48,6 +48,7 @@
 #endif // HAVE_CONFIG_H
 
 #include "diffapp.hh"
+#include <assert.h>
 
 #define COUNTER_KEY 3601
 #define TIME_KEY    3602
@@ -64,8 +65,6 @@ extern const double DX, DY, DD, EPS;
 
 #define MODULER 6
 #define MAX_SIZE (MODULER - 1)
-#define RECV_PERIOD 4
-
 #define WCV_TYPE 1
 #define SENSOR_TYPE 2
 
@@ -83,6 +82,6 @@ enum States {
 	RECEIVING,
 	RECEIVED,
 	SCHEDULING,
-	HOLD
+	BACK
 };
 #endif // !_PING_HH_
