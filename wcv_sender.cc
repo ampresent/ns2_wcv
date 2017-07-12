@@ -395,7 +395,12 @@ double WCVSenderApp::auto_fake_coefficient() {
 	// O <= N, I <= N
 	
 	const static double pi = 3.141592653589793;
-	static double exp = (n-1) * pi * r*r / (rangex*rangey) + 1;
+	MobileNode* node = ((DiffusionRouting*)dr_)->getNode();
+	assert(node->ifhead() != NULL && node->ifhead().next_node() == NULL);
+	WirelessPhy* phy = static_cast<WirelessPhy*>(node->ifhead().lh_first);
+	double r = static_cast<WirelessChannel*>(phy->channel())->getdistCST() + 5;
+	double exp = (n-1) * pi * r*r / (rangex*rangey) + 1;
+
 	/*
 	int N = visibles.size();
 	
