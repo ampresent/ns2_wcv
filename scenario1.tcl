@@ -45,7 +45,7 @@ Phy/WirelessPhy set  bandwidth_  28.8*10e3   ;#28.8 kbps
 # thus the transmitted signal power
 #average Pt= d*d*d*d*L*Pr(d)/(Gt*Gr*ht*ht*hr*hr) = 1mW     
 # Computed by the propagation/threshold program
-Phy/WirelessPhy set  pt_ 0.281838
+Phy/WirelessPhy set  pt_ 0.28183815
 #Specified Parameters for 802.15.4 MAC
 Mac/802_15_4 wpanCmd verbose on   ;# to work in verbose mode 
 Mac/802_15_4 wpanNam namStatus on  ;# default = off (should be turned on before other 'wpanNam' commands can work)
