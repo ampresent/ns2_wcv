@@ -33,6 +33,9 @@ mal_ratiol=1.0
 d=$dist[$r]
 realr=$(./node_needed.py Pr="$d" x="$x" y="$y" neighbors="$neighbors" output="r")
 nn=$(./node_needed.py Pr="$d" x="$x" y="$y" neighbors="$neighbors" output="num")
+# Also need a WCV
+nn=$((nn+1))
+# Base is not malicious
 malicious=`shuf -i 0-$((nn-3)) -n $(python2 -c "print int(($nn-2)*$mal_ratiol)") | xargs `
 echo > initialize
 echo > data_flow
@@ -41,8 +44,8 @@ echo > location
 
 cat > initialize << EOF
 set val(nn)             $nn                         ;# number of mobilenodes
-set val(x)		$((x+realr*2))
-set val(y)		$((y+realr*2))
+set val(x)		$x
+set val(y)		$y
 set rangex		$x
 set rangey		$y
 set wcv			$((nn-1))

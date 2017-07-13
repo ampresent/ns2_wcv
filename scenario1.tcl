@@ -121,7 +121,8 @@ for {set i 0} {$i < $val(nn)} {incr i} {
 	set src_($i) [new Application/DiffApp/PingSender/WCV]
 	$src_($i) config rangex $rangex
 	$src_($i) config rangey $rangey
-	$src_($i) config n $val(nn)
+	# WCV is not included
+	$src_($i) config n [expr $val(nn) - 1]
 	$ns_ attach-diffapp $node_($i) $src_($i)
 	# con_ is energy consumer
 	set con_($i) [new Application/DiffApp/PingSender/OPP]
