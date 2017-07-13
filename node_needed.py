@@ -20,13 +20,13 @@ ht = 1.5
 L  = 0.5
 l  = LIGHT_SPEED/2.4e+9
 
-r = math.sqrt((Pt * Gt**2 * l**2) / (L * Pr)) / (4 * math.pi) + 5;
 
 #########################
 
 for i in sys.argv[1:]:
     if i.startswith('output='):
-        p = (math.pi*r**2)/(x*y)
+        r = math.sqrt((Pt * Gt * Gr * l**2) / (L * Pr)) / (4 * math.pi) + 5;
+        p = ((r**4*(3*math.pi + 11))/3 + 2*(y - 2*r)*(math.pi*r**3 - (2*r**3)/3) + 4*r**4*(math.pi - 4/3) - 2*(2*r - x)*(math.pi*r**3 - (2*r**3)/3) - r**2*math.pi*(y - 2*r)*(2*r - x))/(y*x)**2
 
         mode = i[7:]
         if mode == 'num':

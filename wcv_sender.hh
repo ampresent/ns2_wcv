@@ -109,6 +109,7 @@ private:
   double auto_fake_coefficient();
   double getDegree(DiffusionRouting* dr, bool out, set<int>& neighbors);
   double auto_accurate_fake_coefficient();
+  double expected_neighbors();
 
   double rangex, rangey, r;
   int n;

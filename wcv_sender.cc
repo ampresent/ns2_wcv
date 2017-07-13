@@ -40,6 +40,7 @@
 // this exception also makes it possible to release a modified version
 // which carries forward this exception.
 
+#include <cmath>
 #include "wcv_sender.hh"
 #include "diffusion3/filters/diffusion/one_phase_pull.hh"
 #include "wcv.h"
@@ -373,6 +374,18 @@ double WCVSenderApp::auto_accurate_fake_coefficient() {
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
 }
 
+double WCVSenderApp::expected_neighbors() {
+
+	const static double pi = 3.141592653589793;
+	MobileNode* node = ((DiffusionRouting*)dr_)->getNode();
+	assert(node->ifhead() != NULL && node->ifhead().next_node() == NULL);
+	WirelessPhy* phy = static_cast<WirelessPhy*>(node->ifhead().lh_first);
+	double r = static_cast<WirelessChannel*>(phy->channel())->getdistCST() + 5;
+        double p = ((pow(r,4)*(3*pi + 11))/3 + 2*(rangey - 2*r)*(pi*pow(r,3) - (2*pow(r,3))/3) + 4*pow(r,4)*(pi - 4/3) - 2*(2*r - rangex)*(pi*pow(r,3) - (2*pow(r,3))/3) - pow(r,2)*pi*(rangey - 2*r)*(2*r - rangex))/pow(rangey*rangex,2);
+	double exp = (n-1) * p + 1;
+	return exp;
+}
+
 double WCVSenderApp::auto_fake_coefficient() {
 	set<int> visibles;
 	double O = getDegree((DiffusionRouting*)dr_, true, visibles);
@@ -389,12 +402,6 @@ double WCVSenderApp::auto_fake_coefficient() {
 	
 	// O <= N, I <= N
 	
-	const static double pi = 3.141592653589793;
-	MobileNode* node = ((DiffusionRouting*)dr_)->getNode();
-	assert(node->ifhead() != NULL && node->ifhead().next_node() == NULL);
-	WirelessPhy* phy = static_cast<WirelessPhy*>(node->ifhead().lh_first);
-	double r = static_cast<WirelessChannel*>(phy->channel())->getdistCST() + 5;
-	double exp = (n-1) * pi * r*r / (rangex*rangey) + 1;
 
 	/*
 	int N = visibles.size();
@@ -405,7 +412,7 @@ double WCVSenderApp::auto_fake_coefficient() {
 	}
 	*/
 
-	double coefficient = 2.0 * (O<I?O:I) / exp;
+	double coefficient = 2.0 * (O<I?O:I) / expected_neighbors();
 
 	//assert(coefficient <= 1);
 
