@@ -38,7 +38,13 @@ done
 echo -n 'plot ' >> $script
 for p in /tmp/points_*; do
 	i=$(echo $p|sed 's/[^0-9]//g')
-	echo -n "'$p' title 'Node: $i' with lines," >> $script
+	if [ $i -eq $((n-1)) ]; then
+		echo -n "'$p' title 'WCV' with lines," >> $script
+	elif [ $i -eq $((n-2)) ]; then
+		echo -n "'$p' title 'Base' with lines," >> $script
+	else
+		echo -n "'$p' title 'Node: $i' with lines," >> $script
+	fi
 done
 
 LD_LIBRARY_PATH=.  cat $points | gnuplot $script -p
