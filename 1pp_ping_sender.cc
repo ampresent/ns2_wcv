@@ -84,7 +84,7 @@ void OPPPingSenderApp::send()
 	    DiffPrintWithTime(DEBUG_ALWAYS, "Node%d: Sending Data %d\n", ((DiffusionRouting *)dr_)->getNodeId(), last_seq_sent_);
     }
     // The original data packet must be included
-    WCVNode::statistics[((DiffusionRouting *)dr_)->getNodeId()] ++;
+    statistics[((DiffusionRouting *)dr_)->getNodeId()] ++;
     dr_->send(pubHandle_, &data_attr_);
 
     // Update counter

@@ -72,6 +72,8 @@ private:
   int last_seq_recv_;
   int num_msg_recv_;
   int first_msg_recv_;
+  void log_flow();
+  int flow;
 
   handle setupSubscription();
 };

@@ -64,3 +64,4 @@ char * state_str[] = {
 	"BACK"
 };
 
+map<int, int> statistics;

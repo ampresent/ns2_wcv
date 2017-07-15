@@ -51,10 +51,17 @@ public:
     }
 } class_ping_receiver;
 
+void OPPPingReceiverApp::log_flow() {
+    DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), flow);
+}
+
 int OPPPingReceiverApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "subscribe") == 0) {
       run();
+      return TCL_OK;
+    } else if (strcmp(argv[1], "log-flow") == 0) {
+      log_flow();
       return TCL_OK;
     }
    }
@@ -116,6 +123,8 @@ void OPPPingReceiverApp::recv(NRAttrVec *data, NR::handle )
   if (first_msg_recv_ < 0){
     first_msg_recv_ = counterAttr->getVal();
   }
+
+  flow ++;
 
   // Print output message
   if (last_seq_recv_ >= 0){
@@ -187,6 +196,7 @@ OPPPingReceiverApp::OPPPingReceiverApp(int argc, char **argv)
   last_seq_recv_ = 0;
   num_msg_recv_ = 0;
   first_msg_recv_ = -1;
+  flow = 0;
 
   mr_ = new OPPPingReceiverReceive(this);
 

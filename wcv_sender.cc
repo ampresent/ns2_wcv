@@ -91,7 +91,7 @@ int WCVSenderApp::command(int argc, const char*const* argv) {
   if (argc == 2) {
     if (strcmp(argv[1], "publish") == 0) {
 benign:
-	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	int O = statistics[((DiffusionRouting*)dr_)->getNodeId()];
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
       run();
       return TCL_OK;
@@ -370,7 +370,7 @@ int getFlow(DiffusionRouting* dr) {
 
 double WCVSenderApp::auto_accurate_fake_coefficient() {
 	//int O = getFlow((DiffusionRouting*)dr_);
-	int O = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	int O = statistics[((DiffusionRouting*)dr_)->getNodeId()];
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), O);
 }
 
@@ -418,7 +418,7 @@ double WCVSenderApp::auto_fake_coefficient() {
 
 	coefficient = coefficient > 1 ? 1 : coefficient;
 	
-	int flow = WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()];
+	int flow = statistics[((DiffusionRouting*)dr_)->getNodeId()];
 	DiffPrintWithTime(DEBUG_ALWAYS, "Node %d : Flow %d\n", ((DiffusionRouting*)dr_)->getNodeId(), flow);
 
 	return coefficient;

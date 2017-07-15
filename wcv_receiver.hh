@@ -66,7 +66,7 @@ public:
   void recv(NRAttrVec *data, NR::handle my_handle);
   void run();
   void schedule();
-
+  
   States get_state() {
           struct timeval tmv;
 	  GetTime(&tmv);

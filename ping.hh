@@ -62,6 +62,7 @@ extern NRSimpleAttributeFactory<double> EnergyAttr;
 extern NRSimpleAttributeFactory<int> IDAttr;
 extern NRSimpleAttributeFactory<int> NRTypeAttr;
 extern const double DX, DY, DD, EPS;
+extern map<int, int> statistics;
 
 #define MODULER 6
 #define MAX_SIZE (MODULER - 1)

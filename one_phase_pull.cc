@@ -767,7 +767,7 @@ void OnePhasePullFilter::forwardData(Message *msg,
 	    	NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
 	    };
 	    if (OneWayPerfectMatch(&attrs, routing_entry->attrs_)) {
-	        WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
+	        statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
 	    }
 	    ((DiffusionRouting *)dr_)->sendMessage(sink_message, filter_handle_);
 	  }
@@ -862,7 +862,7 @@ void OnePhasePullFilter::forwardData(Message *msg,
 	NRTypeAttr.make(NRAttribute::IS, SENSOR_TYPE)
     };
     if (OneWayPerfectMatch(&attrs, routing_entry->attrs_)) {
-	WCVNode::statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
+	statistics[((DiffusionRouting*)dr_)->getNodeId()] ++;
     }
     ((DiffusionRouting *)dr_)->sendMessage(out_message, filter_handle_);
 
