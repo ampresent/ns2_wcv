@@ -1,6 +1,7 @@
 if ! [ -d "/tmp/ns" ]; then
 	cd /tmp/
 	yaourt -G ns
+	sed 's/install$/install -j10/g' -i /tmp/ns/PKGBUILD
 fi
 sh -c "cd /home/wuyihao/wsn/ns-2.35/diffusion3/apps/ping; echo Start Coding; zsh"
 echo "Start Building"
